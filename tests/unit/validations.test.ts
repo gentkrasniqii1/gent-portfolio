@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { contactFormSchema } from "@/lib/validations";
+import {
+  contactFormSchema,
+  contactFormServerSchema,
+  isHoneypotTripped,
+} from "@/lib/validations";
 
 describe("contactFormSchema", () => {
   const valid = {
@@ -23,7 +27,7 @@ describe("contactFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects a filled honeypot", () => {
+  it("rejects a filled honeypot on the client schema", () => {
     const result = contactFormSchema.safeParse({
       ...valid,
       website: "https://spam.example",
@@ -37,5 +41,22 @@ describe("contactFormSchema", () => {
       message: "Hi",
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("contactFormServerSchema", () => {
+  it("parses honeypot spam so it can be dropped silently", () => {
+    const result = contactFormServerSchema.safeParse({
+      name: "Bot",
+      email: "bot@example.com",
+      subject: "Spam offer",
+      message: "Buy follower services now.",
+      website: "https://spam.example",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(isHoneypotTripped(result.data.website)).toBe(true);
+    }
   });
 });
