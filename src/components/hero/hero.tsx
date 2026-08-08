@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { ButtonLink } from "@/components/shared/button-link";
+import { Reveal } from "@/components/shared/motion";
 import { SocialLinks } from "@/components/shared/social-links";
 import { profile } from "@/data/profile";
 
@@ -11,7 +12,7 @@ export function Hero() {
       className="relative flex flex-1 flex-col justify-center py-section md:py-section-lg"
     >
       <Container>
-        <div className="max-w-3xl">
+        <Reveal className="max-w-3xl">
           <p className="font-mono text-xs uppercase tracking-widest text-accent">
             {profile.role}
           </p>
@@ -46,7 +47,7 @@ export function Hero() {
               </span>
             ) : null}
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

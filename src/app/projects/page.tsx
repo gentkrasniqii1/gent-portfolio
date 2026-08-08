@@ -33,11 +33,9 @@ export default async function ProjectsPage({
         <div className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">Projects</h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            A living archive of work. Add a project object in{" "}
-            <code className="text-foreground font-mono text-sm">
-              src/data/projects.ts
-            </code>{" "}
-            to publish it here.
+            {projects.length === 0
+              ? "Selected work will appear here as projects are published."
+              : "A living archive of selected software projects and case studies."}
           </p>
         </div>
 
@@ -48,7 +46,7 @@ export default async function ProjectsPage({
           titleAs="h2"
           emptyMessage={
             projects.length === 0
-              ? "No projects yet. Add your first entry to src/data/projects.ts."
+              ? "No projects published yet."
               : "No projects match this category."
           }
         />
