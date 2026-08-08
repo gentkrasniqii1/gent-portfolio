@@ -10,5 +10,6 @@ export const profile: Profile = {
   github: "[YOUR GITHUB]",
   linkedin: "[YOUR LINKEDIN]",
   cvPath: "/documents/cv.pdf",
+  cvLastUpdated: "[YOUR CV LAST UPDATED]",
   availableForWork: true,
 };

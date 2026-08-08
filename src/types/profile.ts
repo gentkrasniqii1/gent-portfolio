@@ -8,5 +8,7 @@ export interface Profile {
   github: string;
   linkedin: string;
   cvPath: string;
+  /** ISO date string, e.g. "2026-08-01" */
+  cvLastUpdated: string;
   availableForWork: boolean;
 }
