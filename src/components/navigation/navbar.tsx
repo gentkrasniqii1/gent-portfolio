@@ -42,7 +42,7 @@ export function Navbar() {
   }, [open]);
 
   return (
-    <header className="border-border/80 bg-background/85 supports-backdrop-filter:bg-background/70 sticky top-0 z-40 border-b backdrop-blur-md">
+    <header className="border-border/80 bg-background/85 supports-backdrop-filter:bg-background/70 sticky top-0 z-40 border-b backdrop-blur-md print:hidden">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Link
           href="/"

@@ -225,3 +225,19 @@
     @apply font-display font-medium tracking-tight text-foreground;
   }
 }
+
+@media print {
+  body {
+    background: white !important;
+    background-image: none !important;
+    color: black !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+
+  #cv-document {
+    break-inside: avoid;
+  }
+}
