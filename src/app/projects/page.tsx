@@ -28,7 +28,7 @@ export default async function ProjectsPage({
   const filtered = getProjects(category);
 
   return (
-    <main className="py-section">
+    <div className="py-section">
       <Container className="space-y-10">
         <div className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">Projects</h1>
@@ -45,6 +45,7 @@ export default async function ProjectsPage({
 
         <ProjectGrid
           projects={filtered}
+          titleAs="h2"
           emptyMessage={
             projects.length === 0
               ? "No projects yet. Add your first entry to src/data/projects.ts."
@@ -52,6 +53,6 @@ export default async function ProjectsPage({
           }
         />
       </Container>
-    </main>
+    </div>
   );
 }

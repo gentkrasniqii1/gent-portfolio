@@ -36,12 +36,12 @@ export function ProjectFilters({ active }: ProjectFiltersProps) {
           key={filter.href}
           href={filter.href}
           className={cn(
-            "rounded-md px-3 py-1.5 text-sm transition-colors",
+            "inline-flex min-h-11 items-center rounded-md px-4 py-2 text-sm transition-colors",
             filter.isActive
               ? "bg-primary text-primary-foreground"
               : "bg-secondary text-secondary-foreground hover:bg-muted",
           )}
-          aria-current={filter.isActive ? "page" : undefined}
+          aria-current={filter.isActive ? "true" : undefined}
         >
           {filter.label}
         </Link>

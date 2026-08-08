@@ -6,12 +6,14 @@ type ProjectGridProps = {
   projects: Project[];
   className?: string;
   emptyMessage?: string;
+  titleAs?: "h2" | "h3";
 };
 
 export function ProjectGrid({
   projects,
   className,
   emptyMessage = "No projects to show yet.",
+  titleAs = "h3",
 }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
@@ -30,7 +32,7 @@ export function ProjectGrid({
     >
       {projects.map((project) => (
         <li key={project.id} className="h-full">
-          <ProjectCard project={project} />
+          <ProjectCard project={project} titleAs={titleAs} />
         </li>
       ))}
     </ul>

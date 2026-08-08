@@ -39,7 +39,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           </span>
         </div>
 
-        <h1 className="text-display text-foreground max-w-3xl">
+        <h1 className="text-display text-foreground max-w-3xl break-words">
           {project.title}
         </h1>
 
@@ -62,6 +62,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           >
             Live demo
             <ArrowUpRight className="ml-2 size-4" aria-hidden />
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
         ) : null}
         {project.githubUrl ? (
@@ -73,6 +74,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           >
             <GitHubIcon className="size-4" />
             View code
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
         ) : null}
       </div>

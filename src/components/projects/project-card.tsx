@@ -10,24 +10,25 @@ import type { Project } from "@/types/project";
 type ProjectCardProps = {
   project: Project;
   className?: string;
+  titleAs?: "h2" | "h3";
 };
 
-export function ProjectCard({ project, className }: ProjectCardProps) {
+export function ProjectCard({
+  project,
+  className,
+  titleAs: TitleTag = "h3",
+}: ProjectCardProps) {
   const hasImage = Boolean(project.image);
   const href = `/projects/${project.slug}`;
 
   return (
     <article
       className={cn(
-        "border-border group flex h-full flex-col overflow-hidden border-b pb-8 sm:border sm:rounded-lg sm:pb-0",
+        "border-border group flex h-full flex-col border-b pb-8 sm:rounded-lg sm:border sm:pb-0",
         className,
       )}
     >
-      <Link
-        href={href}
-        className="bg-muted relative block aspect-[16/10] overflow-hidden sm:rounded-t-lg"
-        aria-label={`View ${project.title}`}
-      >
+      <div className="bg-muted relative aspect-[16/10] overflow-hidden sm:rounded-t-lg">
         {hasImage ? (
           <Image
             src={project.image}
@@ -41,7 +42,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
             {project.title}
           </div>
         )}
-      </Link>
+      </div>
 
       <div className="flex flex-1 flex-col gap-4 pt-5 sm:p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -60,11 +61,12 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         </div>
 
         <div className="space-y-2">
-          <h3 className="font-display text-foreground text-2xl tracking-tight">
+          <TitleTag className="font-display text-foreground text-2xl tracking-tight break-words">
             <Link href={href} className="hover:text-primary transition-colors">
               {project.title}
+              <span className="sr-only"> — view project details</span>
             </Link>
-          </h3>
+          </TitleTag>
           <p className="text-muted-foreground text-sm leading-relaxed">
             {project.shortDescription}
           </p>
@@ -80,23 +82,17 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
           </ul>
         ) : null}
 
-        <div className="mt-auto flex flex-wrap gap-3 pt-2">
-          <Link
-            href={href}
-            className="text-foreground hover:text-accent inline-flex items-center gap-1 text-sm font-medium transition-colors"
-          >
-            View details
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </Link>
+        <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 pt-2">
           {project.liveUrl ? (
             <a
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
+              className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-1 text-sm transition-colors"
             >
               Live demo
               <ArrowUpRight className="size-3.5" aria-hidden />
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           ) : null}
           {project.githubUrl ? (
@@ -104,10 +100,11 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
+              className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-1.5 text-sm transition-colors"
             >
               <GitHubIcon className="size-3.5" />
               GitHub
+              <span className="sr-only"> (opens in a new tab)</span>
             </a>
           ) : null}
         </div>

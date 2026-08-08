@@ -44,10 +44,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   return (
-    <main className="py-section">
+    <div className="py-section">
       <Container>
         <ProjectDetails project={project} />
       </Container>
-    </main>
+    </div>
   );
 }
