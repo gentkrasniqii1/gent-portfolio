@@ -17,13 +17,13 @@ export default async function CvPage() {
 
   return (
     <div className="py-section">
-      <Container className="space-y-8">
+      <Container className="space-y-10">
         <div className="flex flex-col gap-6 print:hidden sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-2xl space-y-3">
+          <div className="max-w-xl space-y-3">
             <h1 className="text-display text-foreground">CV</h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Download the PDF or print this page. Content is generated from the
-              same typed data as the rest of the portfolio.
+              Printable resume view. Download the PDF for a shareable file, or
+              print this page directly.
             </p>
             {!hasCvPdf ? (
               <p className="text-muted-foreground text-sm">
