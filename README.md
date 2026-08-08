@@ -4,7 +4,7 @@ Professional full-stack developer portfolio built with Next.js.
 
 ## Status
 
-**Phase 2 complete** — light-editorial design system (tokens, fonts, theme). Phase 3 is layout/Navbar/Footer.
+**Phase 3 complete** — Navbar, Footer, and site shell. Phase 4 is Hero & About.
 
 ## Tech stack
 
