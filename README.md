@@ -4,7 +4,7 @@ Professional full-stack developer portfolio built with Next.js.
 
 ## Status
 
-**Phase 1 complete** — architecture folders and developer tooling are in place. UI, design system, and content come in later phases.
+**Phase 2 complete** — light-editorial design system (tokens, fonts, theme). Phase 3 is layout/Navbar/Footer.
 
 ## Tech stack
 
