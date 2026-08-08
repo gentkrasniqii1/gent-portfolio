@@ -3,6 +3,7 @@ import { CvActions } from "@/components/cv/cv-actions";
 import { CvDocument } from "@/components/cv/cv-document";
 import { Container } from "@/components/layout/container";
 import { profile } from "@/data/profile";
+import { publicFileExists } from "@/lib/files";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createMetadata({
@@ -11,7 +12,9 @@ export const metadata: Metadata = createMetadata({
   path: "/cv",
 });
 
-export default function CvPage() {
+export default async function CvPage() {
+  const hasCvPdf = await publicFileExists(profile.cvPath);
+
   return (
     <div className="py-section">
       <Container className="space-y-8">
@@ -22,13 +25,11 @@ export default function CvPage() {
               Download the PDF or print this page. Content is generated from the
               same typed data as the rest of the portfolio.
             </p>
-            <p className="text-muted-foreground text-sm">
-              Place your file at{" "}
-              <code className="text-foreground font-mono text-xs">
-                public{profile.cvPath}
-              </code>
-              .
-            </p>
+            {!hasCvPdf ? (
+              <p className="text-muted-foreground text-sm">
+                PDF download will be available once the CV file is added.
+              </p>
+            ) : null}
           </div>
           <CvActions />
         </div>
