@@ -1,19 +1,19 @@
 /**
- * Site-wide constants. Personal values use [YOUR X] placeholders until provided.
+ * Site-wide constants.
  */
 
-export const SITE_NAME = "[YOUR NAME]";
+export const SITE_NAME = "Gent Krasniqi";
 
 export const SITE_DESCRIPTION =
-  "Professional full-stack developer portfolio — projects, skills, and contact.";
+  "Frontend / Full Stack Developer portfolio — projects, skills, and contact.";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const SOCIAL_LINKS = {
-  github: "[YOUR GITHUB]",
-  linkedin: "[YOUR LINKEDIN]",
-  email: "[YOUR EMAIL]",
+  github: "https://github.com/gentkrasniqii1",
+  linkedin: "https://www.linkedin.com/in/gent-krasniqi-19736a355",
+  email: "gentkrass21@gmail.com",
 } as const;
 
 export const NAV_ITEMS = [

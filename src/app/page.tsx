@@ -5,7 +5,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata = createMetadata({
   path: "/",
   description:
-    "Portfolio of [YOUR NAME], Full-Stack Developer — selected projects, skills, and contact.",
+    "Portfolio of Gent Krasniqi, Frontend / Full Stack Developer — selected projects, skills, and contact.",
 });
 
 export default function Home() {

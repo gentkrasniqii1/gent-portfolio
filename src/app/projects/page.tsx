@@ -12,7 +12,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata: Metadata = createMetadata({
   title: "Projects",
   description:
-    "Selected software projects by [YOUR NAME] — case studies, demos, and source code.",
+    "Selected software projects by Gent Krasniqi — case studies, demos, and source code.",
   path: "/projects",
 });
 

@@ -11,7 +11,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata: Metadata = createMetadata({
   title: "About",
   description:
-    "Professional background, skills, certifications, experience, and education of [YOUR NAME].",
+    "Professional background, skills, certifications, experience, and education of Gent Krasniqi.",
   path: "/about",
 });
 
