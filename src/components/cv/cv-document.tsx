@@ -2,11 +2,7 @@ import type { ReactNode } from "react";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { skills } from "@/data/skills";
 import { profile } from "@/data/profile";
-import {
-  formatExperiencePeriod,
-  getEducation,
-  getWorkExperience,
-} from "@/lib/experience";
+import { getEducation, getWorkExperience } from "@/lib/experience";
 import {
   groupSkillsByCategory,
   SKILL_CATEGORY_LABELS,
@@ -29,6 +25,30 @@ function formatLastUpdated(value: string) {
   }).format(date);
 }
 
+/** CV-only date display (does not change shared About timeline formatting). */
+function formatCvPeriod(
+  startDate: string,
+  endDate?: string | "present",
+): string {
+  const formatPart = (value: string) => {
+    if (value === "present") return "Present";
+    if (/^\d{4}-\d{2}(-\d{2})?$/.test(value)) {
+      const normalized = value.length === 7 ? `${value}-01` : value;
+      const date = new Date(normalized);
+      if (!Number.isNaN(date.getTime())) {
+        return new Intl.DateTimeFormat("en", {
+          month: "short",
+          year: "numeric",
+        }).format(date);
+      }
+    }
+    return value;
+  };
+
+  if (!endDate) return formatPart(startDate);
+  return `${formatPart(startDate)} – ${formatPart(endDate)}`;
+}
+
 export function CvDocument() {
   const work = getWorkExperience();
   const education = getEducation();
@@ -44,22 +64,23 @@ export function CvDocument() {
     <article
       id="cv-document"
       className={cn(
-        "border-border bg-card text-card-foreground rounded-lg border p-6 shadow-sm sm:p-10",
-        "print:border-0 print:bg-white print:p-0 print:shadow-none print:text-black",
+        "border-border bg-card text-card-foreground mx-auto w-full max-w-3xl border px-6 py-8 shadow-sm sm:px-10 sm:py-11",
+        "rounded-none sm:rounded-sm",
+        "print:max-w-none print:border-0 print:bg-white print:p-0 print:shadow-none print:text-black",
       )}
     >
-      <header className="border-border space-y-3 border-b pb-6 print:border-black">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground print:text-neutral-600">
+      <header className="border-border space-y-2.5 border-b pb-8 print:border-neutral-400 print:pb-6">
+        <p className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground print:text-neutral-600">
           {profile.role}
         </p>
-        <h2 className="font-display text-3xl tracking-tight sm:text-4xl print:text-black">
+        <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground sm:text-[2rem] print:text-black">
           {profile.name}
         </h2>
-        <p className="text-muted-foreground max-w-2xl text-base leading-relaxed print:text-neutral-700">
+        <p className="text-muted-foreground max-w-2xl text-[0.95rem] leading-relaxed print:text-neutral-700">
           {profile.headline}
         </p>
         {contactBits.length > 0 ? (
-          <p className="text-muted-foreground text-sm print:text-neutral-600">
+          <p className="text-muted-foreground pt-1 text-sm print:text-neutral-600">
             {contactBits.join(" · ")}
           </p>
         ) : null}
@@ -71,7 +92,7 @@ export function CvDocument() {
       </header>
 
       <CvBlock title="Summary">
-        <p className="text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+        <p className="text-foreground/90 text-sm leading-relaxed print:text-neutral-800">
           {profile.summary}
         </p>
       </CvBlock>
@@ -80,15 +101,15 @@ export function CvDocument() {
         {work.length === 0 ? (
           <EmptyHint message="Experience entries will appear here once added." />
         ) : (
-          <ul className="space-y-5">
+          <ul className="space-y-6">
             {work.map((entry) => (
-              <li key={entry.id} className="space-y-1">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-base font-medium print:text-black">
+              <li key={entry.id} className="space-y-1.5">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h3 className="min-w-0 text-[0.95rem] font-semibold text-foreground print:text-black">
                     {entry.title}
                   </h3>
-                  <p className="font-mono text-xs text-muted-foreground print:text-neutral-600">
-                    {formatExperiencePeriod(entry.startDate, entry.endDate)}
+                  <p className="cv-entry-date shrink-0 font-mono text-xs text-muted-foreground print:text-neutral-600">
+                    {formatCvPeriod(entry.startDate, entry.endDate)}
                   </p>
                 </div>
                 <p className="text-sm text-muted-foreground print:text-neutral-700">
@@ -96,7 +117,7 @@ export function CvDocument() {
                   {entry.location ? ` · ${entry.location}` : null}
                 </p>
                 {entry.description.length > 0 ? (
-                  <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-muted-foreground print:text-neutral-700">
+                  <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
                     {entry.description.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -112,21 +133,28 @@ export function CvDocument() {
         {education.length === 0 ? (
           <EmptyHint message="Education entries will appear here once added." />
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-5">
             {education.map((entry) => (
-              <li key={entry.id} className="space-y-1">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-base font-medium print:text-black">
+              <li key={entry.id} className="space-y-1.5">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h3 className="min-w-0 text-[0.95rem] font-semibold text-foreground print:text-black">
                     {entry.title}
                   </h3>
-                  <p className="font-mono text-xs text-muted-foreground print:text-neutral-600">
-                    {formatExperiencePeriod(entry.startDate, entry.endDate)}
+                  <p className="cv-entry-date shrink-0 font-mono text-xs text-muted-foreground print:text-neutral-600">
+                    {formatCvPeriod(entry.startDate, entry.endDate)}
                   </p>
                 </div>
                 <p className="text-sm text-muted-foreground print:text-neutral-700">
                   {entry.organization}
                   {entry.location ? ` · ${entry.location}` : null}
                 </p>
+                {entry.description.length > 0 ? (
+                  <ul className="mt-1.5 list-disc space-y-1 pl-5 text-sm text-muted-foreground print:text-neutral-700">
+                    {entry.description.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -137,13 +165,13 @@ export function CvDocument() {
         {skills.length === 0 ? (
           <EmptyHint message="Skills will appear here once added." />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {SKILL_CATEGORY_ORDER.map((category) => {
               const items = groupedSkills[category] ?? [];
               if (items.length === 0) return null;
               return (
-                <div key={category} className="space-y-2">
-                  <h3 className="text-sm font-medium print:text-black">
+                <div key={category} className="space-y-2.5">
+                  <h3 className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted-foreground print:text-neutral-600">
                     {SKILL_CATEGORY_LABELS[category]}
                   </h3>
                   <ul className="flex flex-wrap gap-2">
@@ -177,11 +205,11 @@ function CvBlock({
   return (
     <section
       className={cn(
-        "border-border space-y-3 border-b py-6 print:break-inside-avoid print:border-neutral-300",
+        "cv-section border-border space-y-4 border-b py-8 print:border-neutral-400",
         className,
       )}
     >
-      <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground print:text-neutral-600">
+      <h2 className="cv-section-title font-mono text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground print:text-neutral-600">
         {title}
       </h2>
       {children}
@@ -191,8 +219,6 @@ function CvBlock({
 
 function EmptyHint({ message }: { message: string }) {
   return (
-    <p className="text-sm text-muted-foreground print:text-neutral-600">
-      {message}
-    </p>
+    <p className="text-sm text-muted-foreground print:hidden">{message}</p>
   );
 }

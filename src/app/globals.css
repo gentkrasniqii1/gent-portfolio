@@ -230,13 +230,80 @@
 }
 
 @media print {
+  /* Force light "resume paper" tokens regardless of .dark on <html> */
+  :root,
+  .dark {
+    --background: #ffffff;
+    --foreground: #111111;
+    --card: #ffffff;
+    --card-foreground: #111111;
+    --popover: #ffffff;
+    --popover-foreground: #111111;
+    --primary: #143746;
+    --primary-foreground: #ffffff;
+    --secondary: #f3f4f6;
+    --secondary-foreground: #171717;
+    --muted: #f3f4f6;
+    --muted-foreground: #525252;
+    --accent: #0f766e;
+    --accent-foreground: #ffffff;
+    --border: #d4d4d4;
+    --input: #d4d4d4;
+    --ring: #0f766e;
+    --surface-glow: transparent;
+    --surface-mist: transparent;
+  }
+
+  html,
   body {
-    background: white !important;
+    background: #ffffff !important;
     background-image: none !important;
-    color: black !important;
+    color: #111111 !important;
   }
 
   a[href]::after {
     content: none !important;
+  }
+
+  /* Print as a traditional single-column resume — reliable system sans */
+  #cv-document,
+  #cv-document * {
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif !important;
+    box-shadow: none !important;
+  }
+
+  #cv-document {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  #cv-document .cv-section {
+    break-inside: avoid;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-color: #c4c4c4 !important;
+  }
+
+  #cv-document .cv-section-title {
+    color: #404040 !important;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.75rem;
+  }
+
+  #cv-document .cv-entry-date {
+    white-space: nowrap;
+    text-align: right;
   }
 }
