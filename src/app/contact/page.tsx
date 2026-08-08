@@ -31,7 +31,7 @@ const ContactForm = dynamic(
 export const metadata: Metadata = createMetadata({
   title: "Contact",
   description:
-    "Get in touch with [YOUR NAME] about freelance work, jobs, or collaboration.",
+    "Get in touch with Gent Krasniqi about freelance work, jobs, or collaboration.",
   path: "/contact",
 });
 
