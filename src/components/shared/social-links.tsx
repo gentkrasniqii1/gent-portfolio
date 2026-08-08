@@ -34,34 +34,30 @@ const items = [
       ? undefined
       : `mailto:${SOCIAL_LINKS.email}`,
   },
-];
+].filter((item) => item.href);
 
 export function SocialLinks({ className }: SocialLinksProps) {
+  if (items.length === 0) return null;
+
   return (
     <ul className={cn("flex items-center gap-1", className)}>
       {items.map(({ key, label, icon: Icon, href }) => (
         <li key={key}>
-          {href ? (
-            <a
-              href={href}
-              target={href.startsWith("mailto:") ? undefined : "_blank"}
-              rel={
-                href.startsWith("mailto:") ? undefined : "noopener noreferrer"
-              }
-              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex size-10 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              aria-label={label}
-            >
-              <Icon className="size-5" aria-hidden />
-            </a>
-          ) : (
-            <span
-              className="text-muted-foreground/50 inline-flex size-10 items-center justify-center rounded-md"
-              title={`${label} — add your link in constants`}
-              aria-label={`${label} (not configured)`}
-            >
-              <Icon className="size-5" aria-hidden />
-            </span>
-          )}
+          <a
+            href={href}
+            target={href?.startsWith("mailto:") ? undefined : "_blank"}
+            rel={
+              href?.startsWith("mailto:") ? undefined : "noopener noreferrer"
+            }
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex size-11 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            aria-label={
+              href?.startsWith("mailto:")
+                ? label
+                : `${label} (opens in a new tab)`
+            }
+          >
+            <Icon className="size-5" aria-hidden />
+          </a>
         </li>
       ))}
     </ul>
