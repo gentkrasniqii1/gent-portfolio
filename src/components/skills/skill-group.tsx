@@ -1,4 +1,7 @@
+"use client";
+
 import { TechBadge } from "@/components/shared/tech-badge";
+import { Stagger, StaggerItem } from "@/components/shared/motion";
 import type { Skill } from "@/types/skill";
 
 type SkillGroupProps = {
@@ -14,9 +17,9 @@ export function SkillGroup({ title, skills }: SkillGroupProps) {
       <h3 className="text-foreground text-sm font-medium tracking-wide uppercase">
         {title}
       </h3>
-      <ul className="flex flex-wrap gap-2">
+      <Stagger as="ul" className="flex flex-wrap gap-2">
         {skills.map((skill) => (
-          <li key={skill.name}>
+          <StaggerItem key={skill.name} as="li">
             <TechBadge>
               {skill.name}
               {typeof skill.level === "number" ? (
@@ -25,9 +28,9 @@ export function SkillGroup({ title, skills }: SkillGroupProps) {
                 </span>
               ) : null}
             </TechBadge>
-          </li>
+          </StaggerItem>
         ))}
-      </ul>
+      </Stagger>
     </div>
   );
 }

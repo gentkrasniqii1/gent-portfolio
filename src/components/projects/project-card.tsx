@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { GitHubIcon } from "@/components/shared/icons";
+import { MotionCard } from "@/components/shared/motion";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { PROJECT_CATEGORY_LABELS, PROJECT_STATUS_LABELS } from "@/lib/projects";
 import { cn } from "@/lib/utils";
@@ -22,9 +25,10 @@ export function ProjectCard({
   const href = `/projects/${project.slug}`;
 
   return (
-    <article
+    <MotionCard
       className={cn(
         "border-border group flex h-full flex-col border-b pb-8 sm:rounded-lg sm:border sm:pb-0",
+        "motion-safe:shadow-none motion-safe:transition-shadow motion-safe:hover:shadow-md",
         className,
       )}
     >
@@ -34,7 +38,7 @@ export function ProjectCard({
             src={project.image}
             alt=""
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={80}
           />
@@ -110,6 +114,6 @@ export function ProjectCard({
           ) : null}
         </div>
       </div>
-    </article>
+    </MotionCard>
   );
 }

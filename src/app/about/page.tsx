@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AboutSummary } from "@/components/about/about-summary";
+import { CertificationsList } from "@/components/about/certifications-list";
 import { EducationList } from "@/components/about/education-list";
 import { ExperienceSection } from "@/components/experience/experience-section";
 import { Container } from "@/components/layout/container";
@@ -10,7 +11,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata: Metadata = createMetadata({
   title: "About",
   description:
-    "Professional background, skills, experience, and education of [YOUR NAME].",
+    "Professional background, skills, certifications, experience, and education of [YOUR NAME].",
   path: "/about",
 });
 
@@ -21,8 +22,7 @@ export default function AboutPage() {
         <div className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">About</h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Background, skills, experience, and education — filled from typed
-            data files as content is ready.
+            Background, skills, certifications, experience, and education.
           </p>
           <ButtonLink href="/contact" variant="secondary" className="mt-2">
             Get in touch
@@ -31,6 +31,7 @@ export default function AboutPage() {
 
         <AboutSummary />
         <SkillsSection />
+        <CertificationsList />
         <ExperienceSection />
         <EducationList />
       </Container>

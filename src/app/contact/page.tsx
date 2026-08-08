@@ -67,11 +67,7 @@ export default function ContactPage() {
               </p>
             ) : (
               <p className="text-muted-foreground">
-                Email: add{" "}
-                <code className="text-foreground font-mono">
-                  SOCIAL_LINKS.email
-                </code>{" "}
-                in constants when ready.
+                Direct email will appear here once contact details are set.
               </p>
             )}
             <SocialLinks />

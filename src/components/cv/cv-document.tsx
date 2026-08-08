@@ -62,15 +62,12 @@ export function CvDocument() {
           <p className="text-muted-foreground text-sm print:text-neutral-600">
             {contactBits.join(" · ")}
           </p>
-        ) : (
-          <p className="text-muted-foreground text-sm print:text-neutral-600">
-            Update contact details in{" "}
-            <code className="font-mono">src/data/profile.ts</code>
+        ) : null}
+        {!isPlaceholder(profile.cvLastUpdated) ? (
+          <p className="text-muted-foreground text-xs print:text-neutral-500">
+            Last updated: {formatLastUpdated(profile.cvLastUpdated)}
           </p>
-        )}
-        <p className="text-muted-foreground text-xs print:text-neutral-500">
-          Last updated: {formatLastUpdated(profile.cvLastUpdated)}
-        </p>
+        ) : null}
       </header>
 
       <CvBlock title="Summary">
@@ -81,7 +78,7 @@ export function CvDocument() {
 
       <CvBlock title="Experience">
         {work.length === 0 ? (
-          <EmptyHint path='src/data/experience.ts (type: "work" | "freelance")' />
+          <EmptyHint message="Experience entries will appear here once added." />
         ) : (
           <ul className="space-y-5">
             {work.map((entry) => (
@@ -113,7 +110,7 @@ export function CvDocument() {
 
       <CvBlock title="Education">
         {education.length === 0 ? (
-          <EmptyHint path='src/data/experience.ts (type: "education")' />
+          <EmptyHint message="Education entries will appear here once added." />
         ) : (
           <ul className="space-y-4">
             {education.map((entry) => (
@@ -138,7 +135,7 @@ export function CvDocument() {
 
       <CvBlock title="Skills" className="border-b-0 pb-0">
         {skills.length === 0 ? (
-          <EmptyHint path="src/data/skills.ts" />
+          <EmptyHint message="Skills will appear here once added." />
         ) : (
           <div className="space-y-4">
             {SKILL_CATEGORY_ORDER.map((category) => {
@@ -192,10 +189,10 @@ function CvBlock({
   );
 }
 
-function EmptyHint({ path }: { path: string }) {
+function EmptyHint({ message }: { message: string }) {
   return (
     <p className="text-sm text-muted-foreground print:text-neutral-600">
-      No entries yet. Add data in <code className="font-mono">{path}</code>.
+      {message}
     </p>
   );
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import { ProjectCard } from "@/components/projects/project-card";
+import { Stagger, StaggerItem } from "@/components/shared/motion";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 
@@ -24,17 +27,18 @@ export function ProjectGrid({
   }
 
   return (
-    <ul
+    <Stagger
+      as="ul"
       className={cn(
         "grid gap-10 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2",
         className,
       )}
     >
       {projects.map((project) => (
-        <li key={project.id} className="h-full">
+        <StaggerItem key={project.id} as="li" className="h-full">
           <ProjectCard project={project} titleAs={titleAs} />
-        </li>
+        </StaggerItem>
       ))}
-    </ul>
+    </Stagger>
   );
 }

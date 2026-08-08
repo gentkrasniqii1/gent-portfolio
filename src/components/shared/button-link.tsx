@@ -26,6 +26,7 @@ export function ButtonLink({
 }: ButtonLinkProps) {
   const classes = cn(
     "inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-medium transition-colors",
+    "motion-safe:transition-[colors,transform,box-shadow] motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-sm",
     variants[variant],
     className,
   );
