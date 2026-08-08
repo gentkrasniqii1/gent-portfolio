@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/navigation/navbar";
+import { SkipToContent } from "@/components/shared/skip-to-content";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { THEME } from "@/lib/theme";
 import "./globals.css";
@@ -47,7 +50,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           storageKey={THEME.storageKey}
           disableTransitionOnChange
         >
-          {children}
+          <SkipToContent />
+          <Navbar />
+          <div id="main-content" className="flex flex-1 flex-col">
+            {children}
+          </div>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
