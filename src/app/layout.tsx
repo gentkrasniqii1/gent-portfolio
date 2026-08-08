@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/navigation/navbar";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -84,6 +86,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
+          <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
