@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@/components/layout/container";
 import { ThemeToggle } from "@/components/navigation/theme-toggle";
 import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
@@ -19,6 +19,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [menuPath, setMenuPath] = useState(pathname);
   const menuId = useId();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   if (menuPath !== pathname) {
     setMenuPath(pathname);
@@ -28,8 +30,41 @@ export function Navbar() {
   useEffect(() => {
     if (!open) return;
 
+    const panel = panelRef.current;
+    const getFocusable = () =>
+      panel
+        ? Array.from(
+            panel.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+            ),
+          )
+        : [];
+
+    const focusables = getFocusable();
+    focusables[0]?.focus();
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+        queueMicrotask(() => menuButtonRef.current?.focus());
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const items = getFocusable();
+      if (items.length === 0) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -46,7 +81,7 @@ export function Navbar() {
       <Container className="flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
-          className="font-display text-foreground hover:text-primary text-lg tracking-tight transition-colors"
+          className="font-display text-foreground hover:text-primary max-w-[60%] truncate text-lg tracking-tight transition-colors sm:max-w-none"
         >
           {SITE_NAME}
         </Link>
@@ -75,10 +110,12 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
+            ref={menuButtonRef}
             type="button"
-            className="border-border hover:bg-muted inline-flex size-10 items-center justify-center rounded-md border md:hidden"
+            className="border-border hover:bg-muted inline-flex size-11 items-center justify-center rounded-md border md:hidden"
             aria-expanded={open}
             aria-controls={menuId}
+            aria-haspopup="true"
             aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((value) => !value)}
           >
@@ -92,6 +129,7 @@ export function Navbar() {
       </Container>
 
       <div
+        ref={panelRef}
         id={menuId}
         hidden={!open}
         className={cn(
@@ -107,7 +145,7 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-md px-3 py-3 text-base transition-colors",
+                  "min-h-11 rounded-md px-3 py-3 text-base transition-colors",
                   active
                     ? "bg-secondary text-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/80",

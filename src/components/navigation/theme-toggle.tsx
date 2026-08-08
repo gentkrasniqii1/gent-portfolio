@@ -22,10 +22,13 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="border-border bg-background text-foreground hover:bg-muted inline-flex size-10 items-center justify-center rounded-md border transition-colors"
+      onClick={() => {
+        if (!isClient) return;
+        setTheme(isDark ? "light" : "dark");
+      }}
+      className="border-border bg-background text-foreground hover:bg-muted inline-flex size-11 items-center justify-center rounded-md border transition-colors"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      disabled={!isClient}
+      aria-pressed={isClient ? isDark : undefined}
     >
       {isClient ? (
         isDark ? (
@@ -34,7 +37,7 @@ export function ThemeToggle() {
           <Moon className="size-5" aria-hidden />
         )
       ) : (
-        <span className="size-5" aria-hidden />
+        <span className="bg-muted size-5 animate-pulse rounded" aria-hidden />
       )}
     </button>
   );
