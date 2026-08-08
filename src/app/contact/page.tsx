@@ -22,7 +22,7 @@ export default function ContactPage() {
     : SOCIAL_LINKS.email;
 
   return (
-    <main className="py-section">
+    <div className="py-section">
       <Container className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-16">
         <div className="space-y-6">
           <h1 className="text-display text-foreground">Contact</h1>
@@ -56,10 +56,15 @@ export default function ContactPage() {
         </div>
 
         <div className="border-border rounded-lg border p-6 sm:p-8">
-          <h2 className="text-foreground mb-6 text-xl">Send a message</h2>
+          <h2
+            id="contact-form-heading"
+            className="text-foreground mb-6 text-xl"
+          >
+            Send a message
+          </h2>
           <ContactForm />
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

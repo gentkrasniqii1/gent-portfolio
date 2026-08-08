@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { type FieldErrors, useForm } from "react-hook-form";
 import { contactFormSchema, type ContactFormValues } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 
@@ -16,11 +16,13 @@ export function ContactForm() {
   const [submitState, setSubmitState] = useState<SubmitState>({
     status: "idle",
   });
+  const statusRef = useRef<HTMLParagraphElement>(null);
 
   const {
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -32,6 +34,22 @@ export function ContactForm() {
       website: "",
     },
   });
+
+  useEffect(() => {
+    if (submitState.status === "idle") return;
+    statusRef.current?.focus();
+  }, [submitState]);
+
+  const onInvalid = (formErrors: FieldErrors<ContactFormValues>) => {
+    const order: Array<keyof ContactFormValues> = [
+      "name",
+      "email",
+      "subject",
+      "message",
+    ];
+    const firstInvalid = order.find((field) => formErrors[field]);
+    if (firstInvalid) setFocus(firstInvalid);
+  };
 
   const onSubmit = handleSubmit(async (values) => {
     setSubmitState({ status: "idle" });
@@ -65,10 +83,15 @@ export function ContactForm() {
         message: "Network error. Check your connection and try again.",
       });
     }
-  });
+  }, onInvalid);
 
   return (
-    <form onSubmit={onSubmit} className="relative space-y-5" noValidate>
+    <form
+      onSubmit={onSubmit}
+      className="relative space-y-5"
+      noValidate
+      aria-labelledby="contact-form-heading"
+    >
       <div
         className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
         aria-hidden
@@ -84,11 +107,13 @@ export function ContactForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id="name" label="Name" error={errors.name?.message}>
+        <Field id="name" label="Name" error={errors.name?.message} required>
           <input
             id="name"
             type="text"
             autoComplete="name"
+            required
+            aria-required="true"
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? "name-error" : undefined}
             className={inputClassName(Boolean(errors.name))}
@@ -96,11 +121,13 @@ export function ContactForm() {
           />
         </Field>
 
-        <Field id="email" label="Email" error={errors.email?.message}>
+        <Field id="email" label="Email" error={errors.email?.message} required>
           <input
             id="email"
             type="email"
             autoComplete="email"
+            required
+            aria-required="true"
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? "email-error" : undefined}
             className={inputClassName(Boolean(errors.email))}
@@ -109,11 +136,18 @@ export function ContactForm() {
         </Field>
       </div>
 
-      <Field id="subject" label="Subject" error={errors.subject?.message}>
+      <Field
+        id="subject"
+        label="Subject"
+        error={errors.subject?.message}
+        required
+      >
         <input
           id="subject"
           type="text"
           autoComplete="off"
+          required
+          aria-required="true"
           aria-invalid={Boolean(errors.subject)}
           aria-describedby={errors.subject ? "subject-error" : undefined}
           className={inputClassName(Boolean(errors.subject))}
@@ -121,21 +155,33 @@ export function ContactForm() {
         />
       </Field>
 
-      <Field id="message" label="Message" error={errors.message?.message}>
+      <Field
+        id="message"
+        label="Message"
+        error={errors.message?.message}
+        required
+      >
         <textarea
           id="message"
           rows={6}
+          required
+          aria-required="true"
           aria-invalid={Boolean(errors.message)}
           aria-describedby={errors.message ? "message-error" : undefined}
-          className={cn(inputClassName(Boolean(errors.message)), "resize-y")}
+          className={cn(
+            inputClassName(Boolean(errors.message)),
+            "min-h-32 resize-y",
+          )}
           {...register("message")}
         />
       </Field>
 
       {submitState.status === "success" ? (
         <p
+          ref={statusRef}
+          tabIndex={-1}
           role="status"
-          className="border-accent/30 bg-accent/10 text-foreground rounded-md border px-4 py-3 text-sm"
+          className="border-accent/30 bg-accent/10 text-foreground rounded-md border px-4 py-3 text-sm outline-none"
         >
           Message sent. I will get back to you soon.
         </p>
@@ -143,8 +189,10 @@ export function ContactForm() {
 
       {submitState.status === "error" ? (
         <p
+          ref={statusRef}
+          tabIndex={-1}
           role="alert"
-          className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-4 py-3 text-sm"
+          className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-4 py-3 text-sm outline-none"
         >
           {submitState.message}
         </p>
@@ -153,7 +201,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-6 text-sm font-medium shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 min-w-40 items-center justify-center rounded-md px-6 text-sm font-medium shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Sending…" : "Send message"}
       </button>
@@ -165,21 +213,29 @@ function Field({
   id,
   label,
   error,
+  required,
   children,
 }: {
   id: string;
   label: string;
   error?: string;
+  required?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className="space-y-2">
       <label htmlFor={id} className="text-foreground text-sm font-medium">
         {label}
+        {required ? (
+          <span className="text-destructive" aria-hidden>
+            {" "}
+            *
+          </span>
+        ) : null}
       </label>
       {children}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="text-destructive text-sm">
+        <p id={`${id}-error`} className="text-destructive text-sm">
           {error}
         </p>
       ) : null}
@@ -189,7 +245,7 @@ function Field({
 
 function inputClassName(hasError: boolean) {
   return cn(
-    "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-2",
+    "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring min-h-11 w-full rounded-md border px-3 py-2.5 text-sm shadow-sm outline-none focus-visible:ring-2",
     hasError && "border-destructive",
   );
 }
