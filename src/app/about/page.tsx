@@ -5,12 +5,14 @@ import { ExperienceSection } from "@/components/experience/experience-section";
 import { Container } from "@/components/layout/container";
 import { ButtonLink } from "@/components/shared/button-link";
 import { SkillsSection } from "@/components/skills/skills-section";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createMetadata({
   title: "About",
   description:
     "Professional background, skills, experience, and education of [YOUR NAME].",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

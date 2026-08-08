@@ -3,12 +3,14 @@ import { ContactForm } from "@/components/contact/contact-form";
 import { Container } from "@/components/layout/container";
 import { SocialLinks } from "@/components/shared/social-links";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createMetadata({
   title: "Contact",
   description:
     "Get in touch with [YOUR NAME] about freelance work, jobs, or collaboration.",
-};
+  path: "/contact",
+});
 
 function isPlaceholder(value: string) {
   return value.startsWith("[YOUR");

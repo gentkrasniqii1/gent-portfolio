@@ -3,11 +3,13 @@ import { CvActions } from "@/components/cv/cv-actions";
 import { CvDocument } from "@/components/cv/cv-document";
 import { Container } from "@/components/layout/container";
 import { profile } from "@/data/profile";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createMetadata({
   title: "CV",
   description: `Curriculum vitae and resume download for ${profile.name}.`,
-};
+  path: "/cv",
+});
 
 export default function CvPage() {
   return (

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ProjectDetails } from "@/components/projects/project-details";
 import { Container } from "@/components/layout/container";
 import { getAllProjectSlugs, getProjectBySlug } from "@/lib/projects";
+import { createMetadata } from "@/lib/seo";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
@@ -19,20 +20,19 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug);
 
   if (!project) {
-    return {
+    return createMetadata({
       title: "Project not found",
-    };
+      path: `/projects/${slug}`,
+      noIndex: true,
+    });
   }
 
-  return {
+  return createMetadata({
     title: project.title,
     description: project.shortDescription,
-    openGraph: {
-      title: project.title,
-      description: project.shortDescription,
-      images: project.image ? [{ url: project.image }] : undefined,
-    },
-  };
+    path: `/projects/${project.slug}`,
+    image: project.image || undefined,
+  });
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {

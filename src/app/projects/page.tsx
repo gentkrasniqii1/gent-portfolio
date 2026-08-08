@@ -5,14 +5,16 @@ import {
 } from "@/components/projects/project-filters";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { Container } from "@/components/layout/container";
-import { getProjects } from "@/lib/projects";
 import { projects } from "@/data/projects";
+import { getProjects } from "@/lib/projects";
+import { createMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createMetadata({
   title: "Projects",
   description:
     "Selected software projects by [YOUR NAME] — case studies, demos, and source code.",
-};
+  path: "/projects",
+});
 
 type ProjectsPageProps = {
   searchParams: Promise<{ category?: string | string[] }>;

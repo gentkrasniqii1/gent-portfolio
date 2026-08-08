@@ -2,8 +2,17 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/navigation/navbar";
+import { JsonLd } from "@/components/shared/json-ld";
 import { SkipToContent } from "@/components/shared/skip-to-content";
 import { ThemeProvider } from "@/components/shared/theme-provider";
+import { profile } from "@/data/profile";
+import { SITE_DESCRIPTION } from "@/lib/constants";
+import {
+  absoluteUrl,
+  createMetadata,
+  getDefaultTitle,
+  getSiteUrl,
+} from "@/lib/seo";
 import { THEME } from "@/lib/theme";
 import "./globals.css";
 
@@ -27,12 +36,26 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "[YOUR NAME] — Full-Stack Developer",
-    template: "%s · [YOUR NAME]",
+    default: getDefaultTitle(),
+    template: `%s · ${profile.name}`,
   },
-  description:
-    "Professional full-stack developer portfolio — projects, skills, and contact.",
+  description: SITE_DESCRIPTION,
+  applicationName: `${profile.name} Portfolio`,
+  authors: [{ name: profile.name, url: absoluteUrl("/") }],
+  creator: profile.name,
+  keywords: [
+    profile.name,
+    profile.role,
+    "Full-Stack Developer",
+    "Portfolio",
+    "Software Engineer",
+  ],
+  ...createMetadata({
+    description: SITE_DESCRIPTION,
+    path: "/",
+  }),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -50,6 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           storageKey={THEME.storageKey}
           disableTransitionOnChange
         >
+          <JsonLd />
           <SkipToContent />
           <Navbar />
           <div id="main-content" className="flex flex-1 flex-col">
