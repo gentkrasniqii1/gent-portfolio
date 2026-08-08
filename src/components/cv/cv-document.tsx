@@ -180,7 +180,7 @@ function CvBlock({
   return (
     <section
       className={cn(
-        "border-border space-y-3 border-b py-6 print:border-neutral-300",
+        "border-border space-y-3 border-b py-6 print:break-inside-avoid print:border-neutral-300",
         className,
       )}
     >

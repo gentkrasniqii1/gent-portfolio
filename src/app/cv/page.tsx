@@ -13,9 +13,9 @@ export const metadata: Metadata = createMetadata({
 
 export default function CvPage() {
   return (
-    <main className="py-section">
+    <div className="py-section">
       <Container className="space-y-8">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-6 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl space-y-3">
             <h1 className="text-display text-foreground">CV</h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
@@ -35,6 +35,6 @@ export default function CvPage() {
 
         <CvDocument />
       </Container>
-    </main>
+    </div>
   );
 }

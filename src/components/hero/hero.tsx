@@ -16,11 +16,14 @@ export function Hero() {
             {profile.role}
           </p>
 
-          <h1 id="hero-heading" className="mt-4 text-display text-foreground">
+          <h1
+            id="hero-heading"
+            className="mt-4 text-display text-foreground break-words"
+          >
             {profile.name}
           </h1>
 
-          <p className="text-muted-foreground mt-5 max-w-xl text-lg leading-relaxed">
+          <p className="text-muted-foreground mt-5 max-w-xl text-lg leading-relaxed break-words">
             {profile.headline}
           </p>
 

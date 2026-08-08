@@ -16,7 +16,7 @@ export const metadata: Metadata = createMetadata({
 
 export default function AboutPage() {
   return (
-    <main className="py-section">
+    <div className="py-section">
       <Container className="space-y-16 md:space-y-20">
         <div className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">About</h1>
@@ -34,6 +34,6 @@ export default function AboutPage() {
         <ExperienceSection />
         <EducationList />
       </Container>
-    </main>
+    </div>
   );
 }
