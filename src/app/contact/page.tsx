@@ -1,9 +1,32 @@
 import type { Metadata } from "next";
-import { ContactForm } from "@/components/contact/contact-form";
+import dynamic from "next/dynamic";
 import { Container } from "@/components/layout/container";
 import { SocialLinks } from "@/components/shared/social-links";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { createMetadata } from "@/lib/seo";
+
+const ContactForm = dynamic(
+  () =>
+    import("@/components/contact/contact-form").then(
+      (module) => module.ContactForm,
+    ),
+  {
+    loading: () => (
+      <div
+        className="space-y-4"
+        aria-busy="true"
+        aria-live="polite"
+        aria-label="Loading contact form"
+      >
+        <div className="bg-muted h-11 animate-pulse rounded-md" />
+        <div className="bg-muted h-11 animate-pulse rounded-md" />
+        <div className="bg-muted h-11 animate-pulse rounded-md" />
+        <div className="bg-muted h-32 animate-pulse rounded-md" />
+        <div className="bg-muted h-11 w-40 animate-pulse rounded-md" />
+      </div>
+    ),
+  },
+);
 
 export const metadata: Metadata = createMetadata({
   title: "Contact",

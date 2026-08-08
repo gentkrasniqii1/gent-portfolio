@@ -23,6 +23,7 @@ export function ProjectGallery({ title, images }: ProjectGalleryProps) {
               fill
               className="object-cover"
               sizes="(max-width: 640px) 100vw, 50vw"
+              quality={80}
             />
           </li>
         ))}

@@ -36,6 +36,7 @@ export function ProjectCard({
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            quality={80}
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center font-mono text-xs uppercase tracking-widest">
