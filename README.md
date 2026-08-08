@@ -16,13 +16,15 @@ This is a production-oriented portfolio site with:
 
 Personal copy still uses `[YOUR X]` placeholders in `src/data/` until you fill real details.
 
+Phases **0–15** are complete. Operational next steps: real content, branch protection, Vercel — see [DEPLOY.md](./DEPLOY.md).
+
 ## Live Demo
 
-Add your production URL after deploying to Vercel, for example:
+Configure after Vercel deploy. Until then use local `npm run dev`.
 
-`https://your-domain.vercel.app`
+Production URL template: `https://your-domain.vercel.app`
 
-Set the same value as `NEXT_PUBLIC_SITE_URL`.
+See [DEPLOY.md](./DEPLOY.md) for GitHub branch protection and Vercel setup.
 
 ## Features
 
@@ -150,10 +152,15 @@ npm run start
 
 ## Deployment
 
-1. Push to GitHub (`gentkrasniqi1/gent-portfolio`)
+Follow the full checklist in [DEPLOY.md](./DEPLOY.md).
+
+Short version:
+
+1. Push to GitHub (`gentkrasniqii1/gent-portfolio`)
 2. Import the repo in [Vercel](https://vercel.com)
 3. Set env vars (`NEXT_PUBLIC_SITE_URL`, Resend keys)
-4. Deploy — production from `main`, preview deployments per PR
+4. Enable branch protection on `main` (require CI)
+5. Deploy — production from `main`, preview deployments per PR
 
 CI (`.github/workflows/ci.yml`) on push/PR to `main` and `dev`:
 
