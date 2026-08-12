@@ -2,11 +2,11 @@ import type { Profile } from "@/types/profile";
 
 export const profile: Profile = {
   name: "Gent Krasniqi",
-  role: "Frontend / Full Stack Developer",
+  role: "Frontend Developer",
   headline:
     "Frontend / Full Stack Developer building modern, responsive web apps with React.js, Vue.js, and Laravel",
   summary:
-    "Computer Science student with a strong foundation in frontend and backend development. Experienced in building modern, responsive web applications using React.js, Vue.js, and Laravel. Passionate about clean code, problem-solving, and continuous improvement. Seeking an opportunity to contribute and grow as a Software Developer.",
+    "Frontend-focused Computer Science student with hands-on experience building responsive, full-stack web applications using React.js, Vue.js, Node.js, and Laravel. Shipped and deployed multiple production applications, including a full-stack recruitment platform with real-time features and a civic-tech AI platform. Completed a 6-month professional React.js internship. Comfortable working across the stack with AI-assisted tools (Cursor, GitHub Copilot) while understanding the underlying logic well enough to debug, extend, and explain it.",
   location: "Prizren, Kosovë",
   email: "gentkrass21@gmail.com",
   github: "https://github.com/gentkrasniqii1",

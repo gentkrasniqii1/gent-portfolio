@@ -35,7 +35,7 @@ export const projects: Project[] = [
     shortDescription:
       "AI-powered recruitment platform that matches candidates to jobs by skills, with scheduling, notifications, and employer pipeline tools.",
     description:
-      "SkillMatch is a full-stack recruitment platform connecting candidates and employers through skill-based job matching. It includes ranked match scoring, job discovery with filters and alerts, a complete applications pipeline, interview scheduling with auto-generated Google Meet/Zoom links, real-time notifications, in-app messaging, and role-based dashboards for candidates, employers, and admins.",
+      "Architected a full-stack recruitment platform matching candidates to jobs by skill, with employer applicant pipelines, interview scheduling, and real-time notifications. Implemented secure JWT authentication with email verification, 2FA, and Google/LinkedIn OAuth, plus role-based candidate/employer/admin dashboards. Integrated Google Calendar/Zoom for auto-generated meeting links and Resend for transactional email delivery.",
     category: "fullstack",
     technologies: [
       "React",
@@ -72,6 +72,34 @@ export const projects: Project[] = [
       "Used Socket.IO for a live notification feed and messaging system decoupled from the REST API",
       "Implemented i18next for a bilingual UI shared consistently across all three dashboard roles",
     ],
+    results: [],
+  },
+  {
+    id: "prizren-smart-city",
+    slug: "prizren-smart-city",
+    title: "Prizren Smart City",
+    shortDescription:
+      "AI-powered civic issue reporting platform for citizens to report municipal issues with photo upload, geolocation, and an interactive live map.",
+    description:
+      "Building a citizen platform for reporting municipal issues (roads, lighting, waste) with photo upload, geolocation, and an interactive live map of reports. Implementing AI-powered issue classification (category + severity) using Claude Vision API. Developing an admin dashboard for municipal departments to filter, manage, and resolve citizen reports.",
+    category: "fullstack",
+    technologies: [
+      "Next.js",
+      "TypeScript",
+      "NestJS",
+      "PostgreSQL",
+      "PostGIS",
+      "Prisma",
+    ],
+    image: "/images/projects/prizren-smart-city/cover.jpg",
+    gallery: [],
+    featured: false,
+    year: 2026,
+    status: "in-progress",
+    role: "Frontend Developer",
+    architecture: [],
+    challenges: [],
+    solutions: [],
     results: [],
   },
 ];
