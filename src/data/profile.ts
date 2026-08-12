@@ -14,4 +14,8 @@ export const profile: Profile = {
   cvPath: "/documents/cv.pdf",
   cvLastUpdated: "[YOUR CV LAST UPDATED]",
   availableForWork: true,
+  languages: [
+    { name: "Albanian", proficiency: "Native" },
+    { name: "English", proficiency: "Professional" },
+  ],
 };
