@@ -56,6 +56,11 @@ export const projects: Project[] = [
     featured: true,
     year: 2026,
     status: "completed",
+    cvHighlights: [
+      "Architected a full-stack recruitment platform matching candidates to jobs by skill, with real-time notifications and employer applicant pipelines",
+      "Implemented secure JWT authentication with 2FA and Google/LinkedIn OAuth, plus role-based candidate/employer/admin dashboards",
+      "Integrated Google Calendar/Zoom for auto-generated meeting links and Resend for transactional email delivery",
+    ],
     role: "Full-Stack Developer",
     architecture: [
       "MVC + feature-module Express API (config, controllers, middleware, models, modules, routes, validators, services) paired with a separate React + Vite SPA frontend. Dockerized with multi-stage builds — nginx serving the built frontend, Node running the production API.",
@@ -96,6 +101,10 @@ export const projects: Project[] = [
     featured: false,
     year: 2026,
     status: "in-progress",
+    cvHighlights: [
+      "Building a citizen platform for reporting municipal issues with photo upload, geolocation, and an interactive live map of reports",
+      "Implementing AI-powered issue classification (category + severity) using Claude Vision API",
+    ],
     role: "Frontend Developer",
     architecture: [],
     challenges: [],

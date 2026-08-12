@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { skills } from "@/data/skills";
+import { projects } from "@/data/projects";
 import { profile } from "@/data/profile";
 import { getEducation, getWorkExperience } from "@/lib/experience";
 import {
@@ -9,6 +10,7 @@ import {
   SKILL_CATEGORY_ORDER,
 } from "@/lib/skills";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types/project";
 
 function isPlaceholder(value: string | undefined) {
   return !value || value.startsWith("[YOUR");
@@ -49,10 +51,28 @@ function formatCvPeriod(
   return `${formatPart(startDate)} – ${formatPart(endDate)}`;
 }
 
+function cvProjectRank(project: Project) {
+  if (project.featured) return 0;
+  if (project.status === "completed") return 1;
+  if (project.status === "in-progress") return 2;
+  return 3;
+}
+
+function getCvProjects(items: Project[]) {
+  return [...items].sort(
+    (a, b) =>
+      cvProjectRank(a) - cvProjectRank(b) ||
+      b.year - a.year ||
+      a.title.localeCompare(b.title),
+  );
+}
+
 export function CvDocument() {
   const work = getWorkExperience();
   const education = getEducation();
+  const cvProjects = getCvProjects(projects);
   const groupedSkills = groupSkillsByCategory(skills);
+  const languages = profile.languages ?? [];
   const contactBits = [
     !isPlaceholder(profile.email) ? profile.email : null,
     !isPlaceholder(profile.location) ? profile.location : null,
@@ -129,6 +149,61 @@ export function CvDocument() {
         )}
       </CvBlock>
 
+      <CvBlock title="Projects">
+        {cvProjects.length === 0 ? (
+          <EmptyHint message="Projects will appear here once added." />
+        ) : (
+          <ul className="space-y-6">
+            {cvProjects.map((project) => {
+              const highlights = (project.cvHighlights ?? []).slice(0, 3);
+              return (
+                <li key={project.id} className="space-y-1.5">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <h3 className="min-w-0 text-[0.95rem] font-semibold text-foreground print:text-black">
+                      {project.title}
+                    </h3>
+                    <p className="cv-entry-date shrink-0 font-mono text-xs text-muted-foreground print:text-neutral-600">
+                      {project.year}
+                    </p>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+                    {project.shortDescription}
+                  </p>
+                  {highlights.length > 0 ? (
+                    <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+                      {highlights.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {project.liveUrl || project.githubUrl ? (
+                    <p className="pt-1 text-sm text-muted-foreground print:text-neutral-600">
+                      {project.liveUrl ? (
+                        <a
+                          href={project.liveUrl}
+                          className="text-foreground underline-offset-2 hover:underline print:text-neutral-800 print:no-underline"
+                        >
+                          Live
+                        </a>
+                      ) : null}
+                      {project.liveUrl && project.githubUrl ? " · " : null}
+                      {project.githubUrl ? (
+                        <a
+                          href={project.githubUrl}
+                          className="text-foreground underline-offset-2 hover:underline print:text-neutral-800 print:no-underline"
+                        >
+                          GitHub
+                        </a>
+                      ) : null}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </CvBlock>
+
       <CvBlock title="Education">
         {education.length === 0 ? (
           <EmptyHint message="Education entries will appear here once added." />
@@ -161,7 +236,7 @@ export function CvDocument() {
         )}
       </CvBlock>
 
-      <CvBlock title="Skills" className="border-b-0 pb-0">
+      <CvBlock title="Skills">
         {skills.length === 0 ? (
           <EmptyHint message="Skills will appear here once added." />
         ) : (
@@ -187,6 +262,28 @@ export function CvDocument() {
               );
             })}
           </div>
+        )}
+      </CvBlock>
+
+      <CvBlock title="Languages" className="border-b-0 pb-0">
+        {languages.length === 0 ? (
+          <EmptyHint message="Languages will appear here once added." />
+        ) : (
+          <ul className="space-y-2">
+            {languages.map((language) => (
+              <li
+                key={language.name}
+                className="flex items-baseline justify-between gap-4 text-sm"
+              >
+                <span className="font-medium text-foreground print:text-black">
+                  {language.name}
+                </span>
+                <span className="text-muted-foreground print:text-neutral-600">
+                  {language.proficiency}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </CvBlock>
     </article>

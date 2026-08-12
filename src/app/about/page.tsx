@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AboutSummary } from "@/components/about/about-summary";
 import { CertificationsList } from "@/components/about/certifications-list";
 import { EducationList } from "@/components/about/education-list";
+import { LanguagesList } from "@/components/about/languages-list";
 import { ExperienceSection } from "@/components/experience/experience-section";
 import { Container } from "@/components/layout/container";
 import { ButtonLink } from "@/components/shared/button-link";
@@ -30,6 +31,7 @@ export default function AboutPage() {
         </div>
 
         <AboutSummary />
+        <LanguagesList />
         <SkillsSection />
         <CertificationsList />
         <ExperienceSection />

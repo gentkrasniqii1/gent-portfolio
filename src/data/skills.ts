@@ -31,6 +31,11 @@ export const skills: Skill[] = [
   { name: "Docker", category: "tools" },
   { name: "Postman", category: "tools" },
   { name: "WordPress", category: "tools" },
+  { name: "Agile/Scrum", category: "practices" },
+  { name: "Clean Code", category: "practices" },
+  { name: "Cursor", category: "ai" },
+  { name: "GitHub Copilot", category: "ai" },
+  { name: "Claude", category: "ai" },
 ];
 
 export function getSkillsByCategory(category: Skill["category"]): Skill[] {

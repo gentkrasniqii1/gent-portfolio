@@ -5,8 +5,9 @@ export const SKILL_CATEGORY_ORDER: SkillCategory[] = [
   "backend",
   "database",
   "devops",
-  "ai",
   "tools",
+  "practices",
+  "ai",
 ];
 
 export const SKILL_CATEGORY_LABELS: Record<SkillCategory, string> = {
@@ -14,8 +15,9 @@ export const SKILL_CATEGORY_LABELS: Record<SkillCategory, string> = {
   backend: "Backend",
   database: "Databases",
   devops: "DevOps & tooling",
-  ai: "AI & tooling",
   tools: "Tools",
+  practices: "Practices",
+  ai: "AI-Assisted Development",
 };
 
 export function groupSkillsByCategory(
