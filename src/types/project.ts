@@ -18,6 +18,8 @@ export interface Project {
   featured: boolean;
   year: number;
   status: ProjectStatus;
+  /** Optional resume-only bullet highlights for the CV page */
+  cvHighlights?: string[];
   challenges: string[];
   solutions: string[];
   results: string[];
