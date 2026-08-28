@@ -87,7 +87,7 @@ Confirm Actions are enabled so `.github/workflows/ci.yml` runs on push/PR.
 - Replace `[YOUR X]` in `src/data/profile.ts`, `src/lib/constants.ts`
 - Add skills / experience / education entries
 - Add the first real project to `src/data/projects.ts`
-- Place `public/documents/cv.pdf`
+- Replace `public/documents/cv.pdf` and verify `/cv` + download (see `docs/cv-sync.md`)
 
 ## 6. Suggested local verification before calling deploy “done”
 

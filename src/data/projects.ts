@@ -3,35 +3,13 @@ import type { Project } from "@/types/project";
 /**
  * Portfolio projects — add a new object here to show it in the UI.
  * Assets: `public/images/projects/`.
- *
- * Example shape (replace with real details when ready — do not invent):
- * {
- *   id: "1",
- *   slug: "example-app",
- *   title: "Example App",
- *   shortDescription: "One-line summary.",
- *   description: "Longer overview.",
- *   category: "fullstack",
- *   technologies: ["Next.js", "TypeScript"],
- *   image: "/images/projects/example-app/cover.jpg",
- *   gallery: [],
- *   liveUrl: "https://…",
- *   githubUrl: "https://github.com/…",
- *   featured: true,
- *   year: 2026,
- *   status: "completed",
- *   challenges: [],
- *   solutions: [],
- *   results: [],
- *   architecture: [],
- *   role: "Full-Stack Developer",
- * }
  */
 export const projects: Project[] = [
   {
     id: "skillmatch",
     slug: "skillmatch",
     title: "SkillMatch",
+    cvFullTitle: "SkillMatch - AI-Powered Job Matching & Recruitment Platform",
     shortDescription:
       "AI-powered recruitment platform that matches candidates to jobs by skills, with scheduling, notifications, and employer pipeline tools.",
     description:
@@ -53,12 +31,14 @@ export const projects: Project[] = [
     image: "/images/projects/skillmatch/cover.png",
     gallery: [],
     liveUrl: "https://www.skillmatchapp.com/",
+    githubUrl: "https://github.com/gentkrasniqii1",
     featured: true,
     year: 2026,
     status: "completed",
     cvHighlights: [
-      "Architected a full-stack recruitment platform matching candidates to jobs by skill, with real-time notifications and employer applicant pipelines",
-      "Implemented secure JWT authentication with 2FA and Google/LinkedIn OAuth, plus role-based candidate/employer/admin dashboards",
+      "Architected a full-stack recruitment platform matching candidates to jobs by skill, with employer applicant pipelines, interview scheduling, and real-time notifications",
+      "Built with React 18, Vite, Tailwind CSS, Node.js/Express, MongoDB, and Socket.IO for real-time chat and live updates",
+      "Implemented secure JWT authentication with email verification, 2FA, and Google/LinkedIn OAuth, plus role-based candidate/employer/admin dashboards",
       "Integrated Google Calendar/Zoom for auto-generated meeting links and Resend for transactional email delivery",
     ],
     role: "Full-Stack Developer",
@@ -83,6 +63,8 @@ export const projects: Project[] = [
     id: "prizren-smart-city",
     slug: "prizren-smart-city",
     title: "Prizren Smart City",
+    cvFullTitle:
+      "Prizren Smart City - AI-Powered Civic Issue Reporting Platform",
     shortDescription:
       "AI-powered civic issue reporting platform for citizens to report municipal issues with photo upload, geolocation, and an interactive live map.",
     description:
@@ -99,13 +81,17 @@ export const projects: Project[] = [
     image: "/images/projects/prizren-smart-city/cover.png",
     gallery: [],
     liveUrl: "https://www.prizrensmartcity.com/",
+    githubUrl: "https://github.com/gentkrasniqii1/prizren-smart-city",
     featured: false,
     year: 2026,
     status: "in-progress",
     cvHighlights: [
-      "Building a citizen platform for reporting municipal issues with photo upload, geolocation, and an interactive live map of reports",
-      "Implementing AI-powered issue classification (category + severity) using Claude Vision API",
+      "Built a citizen reporting platform for municipal issues (roads, lighting, waste) featuring photo upload, GPS geolocation, and an interactive live map with clustering",
+      "Implemented AI-powered issue classification (category, severity, confidence scoring) using Claude Vision API, with admin review and override",
+      "Designed an admin-configurable institution-routing engine assigning reports to departments based on category, priority, and SLA rules",
+      "Implemented secure JWT authentication with refresh tokens, Google/Facebook OAuth, 2FA, and email verification via Resend",
     ],
+    cvStack: "Next.js, TypeScript, NestJS, PostgreSQL/PostGIS, Prisma",
     role: "Frontend Developer",
     architecture: [],
     challenges: [],

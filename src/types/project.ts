@@ -20,6 +20,10 @@ export interface Project {
   status: ProjectStatus;
   /** Optional resume-only bullet highlights for the CV page */
   cvHighlights?: string[];
+  /** Full project title for CV/PDF (short `title` stays for portfolio UI). */
+  cvFullTitle?: string;
+  /** Optional stack line shown on the CV PDF only. */
+  cvStack?: string;
   challenges: string[];
   solutions: string[];
   results: string[];
