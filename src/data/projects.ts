@@ -82,9 +82,9 @@ export const projects: Project[] = [
     gallery: [],
     liveUrl: "https://www.prizrensmartcity.com/",
     githubUrl: "https://github.com/gentkrasniqii1/prizren-smart-city",
-    featured: false,
+    featured: true,
     year: 2026,
-    status: "in-progress",
+    status: "completed",
     cvHighlights: [
       "Built a citizen reporting platform for municipal issues (roads, lighting, waste) featuring photo upload, GPS geolocation, and an interactive live map with clustering",
       "Implemented AI-powered issue classification (category, severity, confidence scoring) using Claude Vision API, with admin review and override",
