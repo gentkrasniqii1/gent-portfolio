@@ -9,9 +9,12 @@ export interface Profile {
   headline: string;
   summary: string;
   location?: string;
+  phone?: string;
   email: string;
   github: string;
   linkedin: string;
+  /** Public portfolio URL for CV/resume links (not derived from env). */
+  portfolioUrl: string;
   cvPath: string;
   /** ISO date string, e.g. "2026-08-01" */
   cvLastUpdated: string;

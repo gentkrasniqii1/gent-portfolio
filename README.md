@@ -66,24 +66,25 @@ tests/
 └── e2e/                 # Playwright smoke tests
 public/
 ├── images/projects/     # Project assets
-└── documents/cv.pdf     # Resume PDF
+└── documents/           # cv.pdf — source file for /cv + download
 ```
 
 **Adding a project:** append one object to `src/data/projects.ts`, drop images in `public/images/projects/`, set `featured: true` if it should appear on Home. Detail routes and sitemap entries update from that data.
 
 ## Project Structure (routes)
 
-| Route              | Purpose                                |
-| ------------------ | -------------------------------------- |
-| `/`                | Hero + featured projects               |
-| `/about`           | Profile, skills, experience, education |
-| `/projects`        | Full archive (`?category=` filter)     |
-| `/projects/[slug]` | Case study detail                      |
-| `/cv`              | Resume view + PDF download             |
-| `/contact`         | Contact form                           |
-| `/api/contact`     | Validated email API                    |
-| `/sitemap.xml`     | Dynamic sitemap                        |
-| `/robots.txt`      | Crawler rules                          |
+| Route               | Purpose                                |
+| ------------------- | -------------------------------------- |
+| `/`                 | Hero + featured projects               |
+| `/about`            | Profile, skills, experience, education |
+| `/projects`         | Full archive (`?category=` filter)     |
+| `/projects/[slug]`  | Case study detail                      |
+| `/cv`               | Resume view + PDF download             |
+| `/contact`          | Contact form                           |
+| `/documents/cv.pdf` | Static resume PDF (parsed for `/cv`)   |
+| `/api/contact`      | Validated email API                    |
+| `/sitemap.xml`      | Dynamic sitemap                        |
+| `/robots.txt`       | Crawler rules                          |
 
 ## Getting Started
 

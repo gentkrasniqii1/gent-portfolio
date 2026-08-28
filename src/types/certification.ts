@@ -8,4 +8,6 @@ export interface Certification {
   image?: string;
   credentialUrl?: string;
   credentialId?: string;
+  /** Label used on the CV PDF (falls back to name — issuer). */
+  cvLabel?: string;
 }

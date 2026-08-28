@@ -3,7 +3,6 @@ import { CvActions } from "@/components/cv/cv-actions";
 import { CvDocument } from "@/components/cv/cv-document";
 import { Container } from "@/components/layout/container";
 import { profile } from "@/data/profile";
-import { publicFileExists } from "@/lib/files";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createMetadata({
@@ -12,9 +11,7 @@ export const metadata: Metadata = createMetadata({
   path: "/cv",
 });
 
-export default async function CvPage() {
-  const hasCvPdf = await publicFileExists(profile.cvPath);
-
+export default function CvPage() {
   return (
     <div className="py-section">
       <Container className="space-y-10">
@@ -25,11 +22,6 @@ export default async function CvPage() {
               Printable resume view. Download the PDF for a shareable file, or
               print this page directly.
             </p>
-            {!hasCvPdf ? (
-              <p className="text-muted-foreground text-sm">
-                PDF download will be available once the CV file is added.
-              </p>
-            ) : null}
           </div>
           <CvActions />
         </div>
