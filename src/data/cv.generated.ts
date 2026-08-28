@@ -1,6 +1,6 @@
 /** AUTO-GENERATED — do not edit manually.
  * Source: C:/Users/gentk/Desktop/gent-portfolio/public/documents/cv.pdf
- * Generated: 2026-08-28T01:16:53.061Z
+ * Generated: 2026-08-28T22:25:09.130Z
  */
 import type { CvData, CvParseMeta } from "@/types/cv";
 
@@ -8,7 +8,7 @@ export const CV_PDF_PATH = "/documents/cv.pdf";
 
 export const CV_PARSE_META: CvParseMeta = {
   sourcePath: "C:/Users/gentk/Desktop/gent-portfolio/public/documents/cv.pdf",
-  generatedAt: "2026-08-28T01:16:53.061Z",
+  generatedAt: "2026-08-28T22:25:09.130Z",
   warnings: [],
 };
 
@@ -58,17 +58,19 @@ export const CV_DATA: CvData = {
       githubUrl: "https://github.com/gentkrasniqii1",
     },
     {
-      id: "prizren-smart-city-ai-powered-civic-issue-reporting-platform-in-development",
-      title:
-        "Prizren Smart City - AI-Powered Civic Issue Reporting Platform - In Development",
-      year: "2026 - Present",
+      id: "prizren-smart-city-ai-powered-civic-issue-reporting-platform",
+      title: "Prizren Smart City - AI-Powered Civic Issue Reporting Platform",
+      year: "2026",
       shortDescription:
         "Next.js, TypeScript, NestJS, PostgreSQL/PostGIS, Prisma",
       highlights: [
-        "Building a citizen platform for reporting municipal issues (roads, lighting, waste) with photo upload, geolocation, and an interactive live map of reports",
-        "Implementing AI-powered issue classification (category + severity) using Claude Vision API",
-        "Developing an admin dashboard for municipal departments to filter, manage, and resolve citizen reports",
+        "Built a citizen reporting platform for municipal issues (roads, lighting, waste) featuring photo upload, GPS geolocation, and an interactive live map with clustering",
+        "Implemented AI-powered issue classification (category, severity, confidence scoring) using Claude Vision API, with admin review and override",
+        "Designed an admin-configurable institution-routing engine assigning reports to departments based on category, priority, and SLA rules",
+        "Implemented secure JWT authentication with refresh tokens, Google/Facebook OAuth, 2FA, and email verification via Resend",
       ],
+      liveUrl: "https://prizrensmartcity.com",
+      githubUrl: "https://github.com/gentkrasniqii1/prizren-smart-city",
     },
   ],
   education: [

@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,6 +22,7 @@ export function Navbar() {
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   if (menuPath !== pathname) {
     setMenuPath(pathname);
@@ -128,37 +130,48 @@ export function Navbar() {
         </div>
       </Container>
 
-      <div
-        ref={panelRef}
-        id={menuId}
-        hidden={!open}
-        className={cn(
-          "border-border bg-background border-t md:hidden",
-          open && "block",
-        )}
-      >
-        <Container as="nav" aria-label="Mobile" className="flex flex-col py-3">
-          {NAV_ITEMS.map((item) => {
-            const active = isActivePath(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "min-h-11 rounded-md px-3 py-3 text-base transition-colors",
-                  active
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/80",
-                )}
-                aria-current={active ? "page" : undefined}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </Container>
-      </div>
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            ref={panelRef}
+            id={menuId}
+            className="border-border bg-background overflow-hidden border-t md:hidden"
+            initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{
+              duration: reduceMotion ? 0 : 0.22,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <Container
+              as="nav"
+              aria-label="Mobile"
+              className="flex flex-col py-3"
+            >
+              {NAV_ITEMS.map((item) => {
+                const active = isActivePath(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "min-h-11 rounded-md px-3 py-3 text-base transition-colors",
+                      active
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/80",
+                    )}
+                    aria-current={active ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </Container>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </header>
   );
 }

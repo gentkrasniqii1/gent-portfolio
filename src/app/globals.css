@@ -49,6 +49,13 @@
   --shadow-xs: 0 1px 2px rgb(18 24 30 / 0.05);
   --shadow-s: 0 4px 12px rgb(18 24 30 / 0.08);
   --shadow-l: 0 12px 32px rgb(18 24 30 / 0.1);
+  /* Slightly deeper elevation reserved for hovered/focused cards only */
+  --shadow-hover: 0 16px 40px rgb(18 24 30 / 0.14);
+
+  /* Motion — single easing + duration scale, used consistently across components */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.18s;
+  --duration-base: 0.4s;
 }
 
 .dark {
@@ -86,6 +93,7 @@
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
   --shadow-s: 0 4px 12px rgb(0 0 0 / 0.4);
   --shadow-l: 0 12px 32px rgb(0 0 0 / 0.5);
+  --shadow-hover: 0 16px 40px rgb(0 0 0 / 0.55);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -161,6 +169,7 @@
   --shadow-sm: var(--shadow-xs);
   --shadow-md: var(--shadow-s);
   --shadow-lg: var(--shadow-l);
+  --shadow-hover: var(--shadow-hover);
 
   /* Breakpoints */
   --breakpoint-sm: 40rem;
