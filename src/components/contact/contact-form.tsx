@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { type FieldErrors, useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ export function ContactForm() {
     status: "idle",
   });
   const statusRef = useRef<HTMLParagraphElement>(null);
+  const reduceMotion = useReducedMotion();
 
   const {
     register,
@@ -177,25 +179,31 @@ export function ContactForm() {
       </Field>
 
       {submitState.status === "success" ? (
-        <p
+        <motion.p
           ref={statusRef}
           tabIndex={-1}
           role="status"
           className="border-accent/30 bg-accent/10 text-foreground rounded-md border px-4 py-3 text-sm outline-none"
+          initial={reduceMotion ? false : { opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
           Message sent. I will get back to you soon.
-        </p>
+        </motion.p>
       ) : null}
 
       {submitState.status === "error" ? (
-        <p
+        <motion.p
           ref={statusRef}
           tabIndex={-1}
           role="alert"
           className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-4 py-3 text-sm outline-none"
+          initial={reduceMotion ? false : { opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
           {submitState.message}
-        </p>
+        </motion.p>
       ) : null}
 
       <button
@@ -245,7 +253,7 @@ function Field({
 
 function inputClassName(hasError: boolean) {
   return cn(
-    "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring min-h-11 w-full rounded-md border px-3 py-2.5 text-sm shadow-sm outline-none focus-visible:ring-2",
+    "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring min-h-11 w-full rounded-md border px-3 py-2.5 text-sm shadow-sm outline-none transition-colors focus-visible:ring-2",
     hasError && "border-destructive",
   );
 }

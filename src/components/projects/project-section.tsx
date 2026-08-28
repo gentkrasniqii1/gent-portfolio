@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Reveal } from "@/components/shared/motion";
 
 type ProjectSectionProps = {
   id: string;
@@ -8,12 +9,15 @@ type ProjectSectionProps = {
 
 export function ProjectSection({ id, title, children }: ProjectSectionProps) {
   return (
-    <section aria-labelledby={id} className="space-y-4">
-      <h2 id={id} className="text-foreground text-2xl">
+    <Reveal as="section" className="space-y-4" aria-labelledby={id}>
+      <h2
+        id={id}
+        className="font-display text-foreground text-2xl tracking-tight"
+      >
         {title}
       </h2>
       {children}
-    </section>
+    </Reveal>
   );
 }
 

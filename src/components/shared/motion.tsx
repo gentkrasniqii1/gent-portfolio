@@ -4,11 +4,14 @@ import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+type RevealTag = "div" | "section" | "li" | "article";
+
 type RevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
-  as?: "div" | "section" | "li" | "article";
+  as?: RevealTag;
+  "aria-labelledby"?: string;
 };
 
 export function Reveal({
@@ -16,18 +19,24 @@ export function Reveal({
   className,
   delay = 0,
   as = "div",
+  "aria-labelledby": ariaLabelledBy,
 }: RevealProps) {
   const reduceMotion = useReducedMotion();
   const Component = motion[as];
 
   if (reduceMotion) {
     const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
+    return (
+      <Tag className={className} aria-labelledby={ariaLabelledBy}>
+        {children}
+      </Tag>
+    );
   }
 
   return (
     <Component
       className={className}
+      aria-labelledby={ariaLabelledBy}
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
@@ -41,7 +50,7 @@ export function Reveal({
 type StaggerProps = {
   children: ReactNode;
   className?: string;
-  as?: "div" | "ul";
+  as?: "div" | "ul" | "ol";
 };
 
 export function Stagger({ children, className, as = "div" }: StaggerProps) {
@@ -142,7 +151,9 @@ export function MotionCard({ className, children, ...props }: MotionCardProps) {
   return (
     <motion.article
       className={cn(className)}
-      whileHover={{ y: -3 }}
+      whileHover={{ y: -4, boxShadow: "var(--shadow-hover)" }}
+      whileFocus={{ y: -4, boxShadow: "var(--shadow-hover)" }}
+      initial={{ boxShadow: "var(--shadow-xs)" }}
       transition={{ type: "spring", stiffness: 380, damping: 28 }}
       {...props}
     >

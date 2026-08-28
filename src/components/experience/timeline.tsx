@@ -1,3 +1,4 @@
+import { Stagger, StaggerItem } from "@/components/shared/motion";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { formatExperiencePeriod } from "@/lib/experience";
 import type { Experience } from "@/types/experience";
@@ -24,9 +25,16 @@ export function Timeline({ items, emptyMessage }: TimelineProps) {
   }
 
   return (
-    <ol className="border-border max-w-2xl space-y-0 border-l pl-6">
+    <Stagger
+      as="ol"
+      className="border-border max-w-2xl space-y-0 border-l pl-6"
+    >
       {items.map((entry) => (
-        <li key={entry.id} className="relative pb-10 last:pb-0">
+        <StaggerItem
+          key={entry.id}
+          as="li"
+          className="relative pb-10 last:pb-0"
+        >
           <span
             className="border-background bg-primary absolute top-1.5 -left-[1.625rem] size-2.5 rounded-full border-2"
             aria-hidden
@@ -60,8 +68,8 @@ export function Timeline({ items, emptyMessage }: TimelineProps) {
               ))}
             </ul>
           ) : null}
-        </li>
+        </StaggerItem>
       ))}
-    </ol>
+    </Stagger>
   );
 }

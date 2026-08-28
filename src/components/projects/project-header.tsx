@@ -2,8 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { GitHubIcon } from "@/components/shared/icons";
+import { Reveal } from "@/components/shared/motion";
 import { TechBadge } from "@/components/shared/tech-badge";
-import { PROJECT_CATEGORY_LABELS, PROJECT_STATUS_LABELS } from "@/lib/projects";
+import {
+  PROJECT_CATEGORY_LABELS,
+  PROJECT_STATUS_LABELS,
+  PROJECT_STATUS_STYLES,
+} from "@/lib/projects";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 
 type ProjectHeaderProps = {
@@ -34,7 +40,12 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           <span className="text-muted-foreground">
             {PROJECT_CATEGORY_LABELS[project.category]}
           </span>
-          <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 font-medium">
+          <span
+            className={cn(
+              "rounded-md px-2 py-0.5 font-medium",
+              PROJECT_STATUS_STYLES[project.status],
+            )}
+          >
             {PROJECT_STATUS_LABELS[project.status]}
           </span>
         </div>
@@ -79,22 +90,24 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         ) : null}
       </div>
 
-      <div className="border-border bg-muted relative aspect-[16/9] overflow-hidden rounded-lg border">
-        {hasImage ? (
-          <Image
-            src={project.image}
-            alt={`${project.title} cover`}
-            fill
-            priority
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 960px"
-          />
-        ) : (
-          <div className="text-muted-foreground flex h-full items-center justify-center font-mono text-xs uppercase tracking-widest">
-            {project.title}
-          </div>
-        )}
-      </div>
+      <Reveal>
+        <div className="border-border bg-muted relative aspect-[16/9] overflow-hidden rounded-lg border shadow-sm">
+          {hasImage ? (
+            <Image
+              src={project.image}
+              alt={`${project.title} cover`}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 960px"
+            />
+          ) : (
+            <div className="text-muted-foreground flex h-full items-center justify-center font-mono text-xs uppercase tracking-widest">
+              {project.title}
+            </div>
+          )}
+        </div>
+      </Reveal>
 
       {project.technologies.length > 0 ? (
         <ul className="flex flex-wrap gap-2">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Container } from "@/components/layout/container";
+import { Reveal } from "@/components/shared/motion";
 import { SocialLinks } from "@/components/shared/social-links";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { createMetadata } from "@/lib/seo";
@@ -47,42 +48,46 @@ export default function ContactPage() {
   return (
     <div className="py-section">
       <Container className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-16">
-        <div className="space-y-6">
-          <h1 className="text-display text-foreground">Contact</h1>
-          <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
-            Tell me about your project, role, or question. I usually reply
-            within a few business days.
-          </p>
+        <Reveal>
+          <div className="space-y-6">
+            <h1 className="text-display text-foreground">Contact</h1>
+            <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
+              Tell me about your project, role, or question. I usually reply
+              within a few business days.
+            </p>
 
-          <div className="space-y-3 text-sm">
-            {email ? (
-              <p>
-                <span className="text-muted-foreground">Email: </span>
-                <a
-                  href={`mailto:${email}`}
-                  className="text-foreground hover:text-accent transition-colors"
-                >
-                  {email}
-                </a>
-              </p>
-            ) : (
-              <p className="text-muted-foreground">
-                Direct email will appear here once contact details are set.
-              </p>
-            )}
-            <SocialLinks />
+            <div className="space-y-3 text-sm">
+              {email ? (
+                <p>
+                  <span className="text-muted-foreground">Email: </span>
+                  <a
+                    href={`mailto:${email}`}
+                    className="text-foreground hover:text-accent transition-colors"
+                  >
+                    {email}
+                  </a>
+                </p>
+              ) : (
+                <p className="text-muted-foreground">
+                  Direct email will appear here once contact details are set.
+                </p>
+              )}
+              <SocialLinks />
+            </div>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="border-border rounded-lg border p-6 sm:p-8">
-          <h2
-            id="contact-form-heading"
-            className="text-foreground mb-6 text-xl"
-          >
-            Send a message
-          </h2>
-          <ContactForm />
-        </div>
+        <Reveal delay={0.08}>
+          <div className="border-border bg-card rounded-lg border p-6 shadow-sm sm:p-8">
+            <h2
+              id="contact-form-heading"
+              className="text-foreground mb-6 text-xl"
+            >
+              Send a message
+            </h2>
+            <ContactForm />
+          </div>
+        </Reveal>
       </Container>
     </div>
   );

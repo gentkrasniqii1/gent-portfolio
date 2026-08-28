@@ -6,7 +6,11 @@ import { ArrowUpRight } from "lucide-react";
 import { GitHubIcon } from "@/components/shared/icons";
 import { MotionCard } from "@/components/shared/motion";
 import { TechBadge } from "@/components/shared/tech-badge";
-import { PROJECT_CATEGORY_LABELS, PROJECT_STATUS_LABELS } from "@/lib/projects";
+import {
+  PROJECT_CATEGORY_LABELS,
+  PROJECT_STATUS_LABELS,
+  PROJECT_STATUS_STYLES,
+} from "@/lib/projects";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 
@@ -27,8 +31,7 @@ export function ProjectCard({
   return (
     <MotionCard
       className={cn(
-        "border-border group flex h-full flex-col border-b pb-8 sm:rounded-lg sm:border sm:pb-0",
-        "motion-safe:shadow-none motion-safe:transition-shadow motion-safe:hover:shadow-md",
+        "border-border group flex h-full flex-col border-b pb-8 sm:rounded-lg sm:border sm:pb-0 sm:bg-card",
         className,
       )}
     >
@@ -60,15 +63,27 @@ export function ProjectCard({
           <span className="text-muted-foreground">
             {PROJECT_CATEGORY_LABELS[project.category]}
           </span>
-          <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 font-medium">
+          <span
+            className={cn(
+              "rounded-md px-2 py-0.5 font-medium",
+              PROJECT_STATUS_STYLES[project.status],
+            )}
+          >
             {PROJECT_STATUS_LABELS[project.status]}
           </span>
         </div>
 
         <div className="space-y-2">
           <TitleTag className="font-display text-foreground text-2xl tracking-tight break-words">
-            <Link href={href} className="hover:text-primary transition-colors">
+            <Link
+              href={href}
+              className="hover:text-primary group/link inline-flex items-center gap-1.5 transition-colors"
+            >
               {project.title}
+              <ArrowUpRight
+                className="size-4 -translate-y-0.5 opacity-0 transition-all motion-safe:duration-200 group-hover/link:translate-y-0 group-hover/link:opacity-100"
+                aria-hidden
+              />
               <span className="sr-only"> — view project details</span>
             </Link>
           </TitleTag>

@@ -16,6 +16,13 @@ export const PROJECT_STATUS_LABELS: Record<Project["status"], string> = {
   archived: "Archived",
 };
 
+/** Subtle status differentiation — accent for active work, neutral otherwise. */
+export const PROJECT_STATUS_STYLES: Record<Project["status"], string> = {
+  completed: "bg-muted text-muted-foreground",
+  "in-progress": "bg-accent/10 text-accent",
+  archived: "bg-muted text-muted-foreground",
+};
+
 export function sortProjectsByYear(items: Project[]): Project[] {
   return [...items].sort(
     (a, b) => b.year - a.year || a.title.localeCompare(b.title),
