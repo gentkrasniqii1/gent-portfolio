@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyTextCorrections,
   CvValidationError,
+  isGitHubProfileUrl,
   normalizeRole,
   parseCvText,
   validateCvData,
@@ -37,6 +39,30 @@ describe("normalizeRole", () => {
   });
 });
 
+describe("applyTextCorrections", () => {
+  it("restores Albanian diacritics in place names", () => {
+    expect(applyTextCorrections("Prizren, Kosove · Azwedo, Prishtine")).toBe(
+      "Prizren, Kosovë · Azwedo, Prishtinë",
+    );
+  });
+
+  it("leaves already-correct text untouched", () => {
+    expect(applyTextCorrections("Prizren, Kosovë")).toBe("Prizren, Kosovë");
+  });
+});
+
+describe("isGitHubProfileUrl", () => {
+  it("detects profile links but not repository links", () => {
+    expect(isGitHubProfileUrl("https://github.com/gentkrasniqii1")).toBe(true);
+    expect(isGitHubProfileUrl("https://github.com/gentkrasniqii1/")).toBe(true);
+    expect(
+      isGitHubProfileUrl(
+        "https://github.com/gentkrasniqii1/prizren-smart-city",
+      ),
+    ).toBe(false);
+  });
+});
+
 describe("parseCvText", () => {
   it("parses header, sections, projects, and additional information", () => {
     const { data, warnings } = parseCvText(SAMPLE_CV_TEXT);
@@ -45,7 +71,7 @@ describe("parseCvText", () => {
     expect(data.identity.name).toBe("GENT KRASNIQI");
     expect(data.identity.role).toBe("FRONTEND DEVELOPER");
     expect(data.identity.contactBits).toEqual([
-      "Prizren, Kosove",
+      "Prizren, Kosovë",
       "+383 49 168 682",
       "gentkrass21@gmail.com",
       "linkedin.com/in/gent-krasniqi",
@@ -56,11 +82,10 @@ describe("parseCvText", () => {
     expect(data.skillGroups).toHaveLength(2);
     expect(data.projects).toHaveLength(1);
     expect(data.projects[0]?.liveUrl).toBe("https://skillmatchapp.com");
-    expect(data.projects[0]?.githubUrl).toBe(
-      "https://github.com/gentkrasniqii1",
-    );
+    // A bare profile link is not a repository, so it is dropped.
+    expect(data.projects[0]?.githubUrl).toBeUndefined();
     expect(data.experience[0]?.title).toBe(
-      "React.js Intern - Azwedo, Prishtine",
+      "React.js Intern - Azwedo, Prishtinë",
     );
     expect(data.education[0]?.title).toBe(
       "Computer Science and Engineering - UBT",
