@@ -18,12 +18,15 @@ type ProjectCardProps = {
   project: Project;
   className?: string;
   titleAs?: "h2" | "h3";
+  /** Use "eager" for cards that render above the fold. */
+  imageLoading?: "eager" | "lazy";
 };
 
 export function ProjectCard({
   project,
   className,
   titleAs: TitleTag = "h3",
+  imageLoading = "lazy",
 }: ProjectCardProps) {
   const hasImage = Boolean(project.image);
   const href = `/projects/${project.slug}`;
@@ -39,11 +42,11 @@ export function ProjectCard({
         {hasImage ? (
           <Image
             src={project.image}
-            alt=""
+            alt={project.imageAlt}
             fill
+            loading={imageLoading}
             className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            quality={80}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
           />
         ) : (
           <div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center font-mono text-xs uppercase tracking-widest">
@@ -77,6 +80,7 @@ export function ProjectCard({
           <TitleTag className="font-display text-foreground text-2xl tracking-tight break-words">
             <Link
               href={href}
+              aria-label={`${project.title} case study`}
               className="hover:text-primary group/link inline-flex items-center gap-1.5 transition-colors"
             >
               {project.title}
@@ -84,7 +88,6 @@ export function ProjectCard({
                 className="size-4 -translate-y-0.5 opacity-0 transition-all motion-safe:duration-200 group-hover/link:translate-y-0 group-hover/link:opacity-100"
                 aria-hidden
               />
-              <span className="sr-only"> — view project details</span>
             </Link>
           </TitleTag>
           <p className="text-muted-foreground text-sm leading-relaxed">

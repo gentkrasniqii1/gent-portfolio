@@ -44,6 +44,7 @@ export default async function ProjectsPage({
         <ProjectGrid
           projects={filtered}
           titleAs="h2"
+          eagerCount={2}
           emptyMessage={
             projects.length === 0
               ? "No projects published yet."

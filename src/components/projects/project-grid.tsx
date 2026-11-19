@@ -10,6 +10,8 @@ type ProjectGridProps = {
   className?: string;
   emptyMessage?: string;
   titleAs?: "h2" | "h3";
+  /** Number of leading cards whose images load eagerly (above the fold). */
+  eagerCount?: number;
 };
 
 export function ProjectGrid({
@@ -17,6 +19,7 @@ export function ProjectGrid({
   className,
   emptyMessage = "No projects to show yet.",
   titleAs = "h3",
+  eagerCount = 0,
 }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
@@ -34,9 +37,13 @@ export function ProjectGrid({
         className,
       )}
     >
-      {projects.map((project) => (
+      {projects.map((project, index) => (
         <StaggerItem key={project.id} as="li" className="h-full">
-          <ProjectCard project={project} titleAs={titleAs} />
+          <ProjectCard
+            project={project}
+            titleAs={titleAs}
+            imageLoading={index < eagerCount ? "eager" : "lazy"}
+          />
         </StaggerItem>
       ))}
     </Stagger>

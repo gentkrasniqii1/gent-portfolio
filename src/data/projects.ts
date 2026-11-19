@@ -29,9 +29,12 @@ export const projects: Project[] = [
       "i18next",
     ],
     image: "/images/projects/skillmatch/cover.png",
+    imageAlt:
+      "SkillMatch cover showing the candidate dashboard on desktop and mobile, with AI match scores, upcoming interviews and recent job matches",
     gallery: [],
     liveUrl: "https://www.skillmatchapp.com/",
-    githubUrl: "https://github.com/gentkrasniqii1",
+    // TODO: add the SkillMatch repository URL (button stays hidden until set; never link the GitHub profile here).
+    githubUrl: undefined,
     featured: true,
     year: 2026,
     status: "completed",
@@ -79,6 +82,8 @@ export const projects: Project[] = [
       "Prisma",
     ],
     image: "/images/projects/prizren-smart-city/cover.png",
+    imageAlt:
+      "Prizren Smart City cover with the project logo, its report, track, collaborate and transparency pillars, and a photo of Prizren's Old Stone Bridge",
     gallery: [],
     liveUrl: "https://www.prizrensmartcity.com/",
     githubUrl: "https://github.com/gentkrasniqii1/prizren-smart-city",

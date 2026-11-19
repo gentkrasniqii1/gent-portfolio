@@ -95,9 +95,9 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           {hasImage ? (
             <Image
               src={project.image}
-              alt={`${project.title} cover`}
+              alt={project.imageAlt}
               fill
-              priority
+              preload
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 960px"
             />

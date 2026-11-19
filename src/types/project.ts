@@ -12,6 +12,8 @@ export interface Project {
   category: ProjectCategory;
   technologies: string[];
   image: string;
+  /** Describes what the cover image actually shows. */
+  imageAlt: string;
   gallery: string[];
   liveUrl?: string;
   githubUrl?: string;

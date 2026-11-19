@@ -11,6 +11,7 @@ function makeProject(
     category: "fullstack",
     technologies: [],
     image: "",
+    imageAlt: "",
     gallery: [],
     featured: false,
     status: "completed",
