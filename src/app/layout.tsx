@@ -18,6 +18,7 @@ import {
   getSiteUrl,
 } from "@/lib/seo";
 import { THEME } from "@/lib/theme";
+import "./font-fallbacks.css";
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -30,6 +31,10 @@ const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
   display: "swap",
+  // Uses the tuned @font-face in font-fallbacks.css instead of the automatic one,
+  // so the centred hero name keeps its exact width when the font swaps in.
+  adjustFontFallback: false,
+  fallback: ["Newsreader Metric Fallback", "Georgia", "serif"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -37,6 +42,18 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
+  // The automatic fallback is Arial-based, which is ~25% wider than Plex Mono
+  // in uppercase labels and made them re-wrap when the font swapped in. These
+  // monospace fonts share Plex Mono's 0.6em advance width, so nothing moves
+  // (Consolas is left out on purpose: at 0.55em, centred labels would shift).
+  adjustFontFallback: false,
+  fallback: [
+    "ui-monospace",
+    "SFMono-Regular",
+    "Menlo",
+    "Courier New",
+    "monospace",
+  ],
 });
 
 /** Analytics endpoints only exist on Vercel; elsewhere they 404 in the console. */

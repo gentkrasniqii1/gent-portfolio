@@ -1,0 +1,13 @@
+/* Metric-matched fallback for Newsreader (replaces next/font's automatic one).
+ * size-adjust is tuned so the hero name has the same width before and after
+ * the web font loads; the centred heading would otherwise slide sideways when
+ * the font swaps in. The vertical overrides are next/font's values rescaled by
+ * the new size-adjust, so line boxes stay identical. */
+@font-face {
+  font-family: "Newsreader Metric Fallback";
+  src: local("Times New Roman");
+  size-adjust: 109.09%;
+  ascent-override: 67.37%;
+  descent-override: 24.29%;
+  line-gap-override: 0%;
+}
