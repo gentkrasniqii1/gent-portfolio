@@ -8,6 +8,8 @@ type ButtonLinkProps = {
   variant?: "primary" | "secondary" | "ghost";
   className?: string;
   external?: boolean;
+  /** Renders a plain download link; a string sets the saved file name. */
+  download?: boolean | string;
 };
 
 const variants = {
@@ -23,13 +25,22 @@ export function ButtonLink({
   variant = "primary",
   className,
   external = false,
+  download,
 }: ButtonLinkProps) {
   const classes = cn(
-    "inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-medium transition-colors",
+    "group/button inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-medium transition-colors",
     "motion-safe:transition-[colors,transform,box-shadow] motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-sm",
     variants[variant],
     className,
   );
+
+  if (download) {
+    return (
+      <a href={href} className={classes} download={download}>
+        {children}
+      </a>
+    );
+  }
 
   if (external) {
     return (
