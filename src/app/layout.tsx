@@ -4,6 +4,7 @@ import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Footer } from "@/components/layout/footer";
+import { MotionProvider } from "@/components/motion/motion-provider";
 import { Navbar } from "@/components/navigation/navbar";
 import { JsonLd } from "@/components/shared/json-ld";
 import { SkipToContent } from "@/components/shared/skip-to-content";
@@ -38,6 +39,9 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+/** Analytics endpoints only exist on Vercel; elsewhere they 404 in the console. */
+const IS_VERCEL = Boolean(process.env.VERCEL);
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
@@ -50,10 +54,14 @@ export const metadata: Metadata = {
   creator: profile.name,
   keywords: [
     profile.name,
-    profile.role,
     "Full-Stack Developer",
-    "Portfolio",
-    "Software Engineer",
+    "Frontend Developer",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "NestJS",
+    "Prizren",
+    "Kosovë",
   ],
   ...createMetadata({
     description: SITE_DESCRIPTION,
@@ -70,6 +78,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${sourceSans.variable} ${newsreader.variable} ${ibmPlexMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
@@ -80,19 +89,25 @@ export default function RootLayout({
           storageKey={THEME.storageKey}
           disableTransitionOnChange
         >
-          <JsonLd />
-          <SkipToContent />
-          <Navbar />
-          <main
-            id="main-content"
-            tabIndex={-1}
-            className="flex flex-1 flex-col outline-none"
-          >
-            {children}
-          </main>
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
+          <MotionProvider>
+            <JsonLd />
+            <SkipToContent />
+            <Navbar />
+            <main
+              id="main-content"
+              tabIndex={-1}
+              className="flex flex-1 flex-col outline-none"
+            >
+              {children}
+            </main>
+            <Footer />
+          </MotionProvider>
+          {IS_VERCEL ? (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          ) : null}
         </ThemeProvider>
       </body>
     </html>

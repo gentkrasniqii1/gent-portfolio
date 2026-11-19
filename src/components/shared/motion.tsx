@@ -1,8 +1,16 @@
 "use client";
 
-import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
-import type { ComponentProps, ReactNode } from "react";
+import { motion, type HTMLMotionProps } from "motion/react";
+import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+
+/*
+ * Server and client always render the same `motion.*` element. Reduced motion
+ * is handled globally by `MotionProvider` (`reducedMotion="user"`), so there is
+ * no markup branch that could cause a hydration mismatch.
+ */
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 type RevealTag = "div" | "section" | "li" | "article";
 
@@ -21,17 +29,7 @@ export function Reveal({
   as = "div",
   "aria-labelledby": ariaLabelledBy,
 }: RevealProps) {
-  const reduceMotion = useReducedMotion();
   const Component = motion[as];
-
-  if (reduceMotion) {
-    const Tag = as;
-    return (
-      <Tag className={className} aria-labelledby={ariaLabelledBy}>
-        {children}
-      </Tag>
-    );
-  }
 
   return (
     <Component
@@ -40,7 +38,7 @@ export function Reveal({
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, delay, ease: EASE }}
     >
       {children}
     </Component>
@@ -54,13 +52,7 @@ type StaggerProps = {
 };
 
 export function Stagger({ children, className, as = "div" }: StaggerProps) {
-  const reduceMotion = useReducedMotion();
   const Component = motion[as];
-
-  if (reduceMotion) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
 
   return (
     <Component
@@ -89,13 +81,7 @@ export function StaggerItem({
   className?: string;
   as?: "div" | "li";
 }) {
-  const reduceMotion = useReducedMotion();
   const Component = motion[as];
-
-  if (reduceMotion) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
 
   return (
     <Component
@@ -105,7 +91,7 @@ export function StaggerItem({
         show: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+          transition: { duration: 0.35, ease: EASE },
         },
       }}
     >
@@ -114,18 +100,24 @@ export function StaggerItem({
   );
 }
 
-export function PageTransition({ children }: { children: ReactNode }) {
-  const reduceMotion = useReducedMotion();
+/**
+ * True once the app has hydrated. The first page is rendered without an
+ * entrance animation so its content (and LCP) never waits on JavaScript.
+ */
+let hasHydrated = false;
 
-  if (reduceMotion) {
-    return <>{children}</>;
-  }
+export function PageTransition({ children }: { children: ReactNode }) {
+  const animateIn = hasHydrated;
+
+  useEffect(() => {
+    hasHydrated = true;
+  }, []);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={animateIn ? { opacity: 0, y: 8 } : false}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.35, ease: EASE }}
     >
       {children}
     </motion.div>
@@ -138,16 +130,6 @@ type MotionCardProps = {
 } & Omit<HTMLMotionProps<"article">, "children" | "className">;
 
 export function MotionCard({ className, children, ...props }: MotionCardProps) {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return (
-      <article className={className} {...(props as ComponentProps<"article">)}>
-        {children}
-      </article>
-    );
-  }
-
   return (
     <motion.article
       className={cn(className)}

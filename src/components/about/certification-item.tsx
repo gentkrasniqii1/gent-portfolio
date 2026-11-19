@@ -130,7 +130,6 @@ export function CertificationItem({
               fill
               className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.02]"
               sizes="(max-width: 640px) 80vw, 320px"
-              quality={80}
             />
           </span>
         </button>
@@ -204,7 +203,6 @@ export function CertificationItem({
                         className="object-contain p-2 sm:p-4"
                         sizes="(max-width: 896px) 100vw, 896px"
                         quality={90}
-                        priority
                       />
                     </div>
                   </motion.div>

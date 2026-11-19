@@ -70,10 +70,10 @@ export function Hero() {
             <StaggerItem className="order-1 shrink-0 sm:order-2">
               <Image
                 src="/images/profile/headshot.jpg"
-                alt="Gent Krasniqi"
+                alt="Portrait of Gent Krasniqi"
                 width={HEADSHOT_SIZE}
                 height={HEADSHOT_SIZE}
-                priority
+                preload
                 className="border-border bg-muted size-[112px] rounded-xl border object-cover shadow-sm"
               />
             </StaggerItem>
