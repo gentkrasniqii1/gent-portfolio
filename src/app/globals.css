@@ -42,6 +42,10 @@
   --surface-glow: rgba(20, 55, 70, 0.06);
   --surface-mist: rgba(15, 118, 110, 0.05);
 
+  /* Hero backdrop: faint grid lines + accent glow behind the portrait */
+  --grid-line: rgb(20 55 70 / 0.07);
+  --hero-glow: rgb(15 118 110 / 0.2);
+
   /* Shared radius token (theme map expands this) */
   --radius: 0.375rem;
 
@@ -89,6 +93,9 @@
 
   --surface-glow: rgba(126, 182, 196, 0.08);
   --surface-mist: rgba(45, 212, 191, 0.06);
+
+  --grid-line: rgb(235 232 226 / 0.05);
+  --hero-glow: rgb(45 212 191 / 0.16);
 
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
   --shadow-s: 0 4px 12px rgb(0 0 0 / 0.4);
@@ -179,6 +186,80 @@
   --breakpoint-2xl: 96rem;
 }
 
+/* Keyframe animations. Only transform and opacity are animated, and every
+ * usage sits behind `motion-safe:` so reduced-motion users get static content. */
+@theme {
+  --animate-enter: enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-enter-scale: enter-scale 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-ring: ring-spin 14s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  /* Entrances start at 0.01 rather than 0: visually identical, but browsers
+   * skip fully transparent elements when timing Largest Contentful Paint, so
+   * starting at 0 would push LCP back to whenever a frame next lands after
+   * hydration. */
+  @keyframes enter {
+    from {
+      opacity: 0.01;
+      transform: translateY(14px);
+    }
+  }
+
+  @keyframes enter-scale {
+    from {
+      opacity: 0.01;
+      transform: scale(0.94);
+    }
+  }
+
+  @keyframes ring-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+}
+
+/* Faint grid that fades out towards the edges of the hero. */
+@utility hero-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  mask-image: radial-gradient(
+    ellipse 70% 65% at 50% 35%,
+    #000 30%,
+    transparent 100%
+  );
+}
+
+/* Soft glow; a gradient rather than a blur filter, so it costs one paint. */
+@utility hero-glow {
+  background: radial-gradient(closest-side, var(--hero-glow), transparent);
+}
+
+/* Accent ring drawn around the circular portrait; rotates via animate-ring. */
+@utility portrait-ring {
+  background: conic-gradient(
+    from 0deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 15%, transparent) 30%,
+    var(--primary) 55%,
+    color-mix(in srgb, var(--primary) 15%, transparent) 80%,
+    var(--accent)
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /* Base                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -201,8 +282,10 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
     }
   }
 
