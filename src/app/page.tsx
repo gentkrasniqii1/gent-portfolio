@@ -1,5 +1,6 @@
 import { FeaturedProjects } from "@/components/projects/featured-projects";
 import { Hero } from "@/components/hero/hero";
+import { StatsStrip } from "@/components/home/stats-strip";
 import { SITE_DESCRIPTION } from "@/lib/constants";
 import { createMetadata } from "@/lib/seo";
 
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <Hero />
+      <StatsStrip />
       <FeaturedProjects />
     </div>
   );
