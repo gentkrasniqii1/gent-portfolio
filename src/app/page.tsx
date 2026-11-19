@@ -1,11 +1,11 @@
 import { FeaturedProjects } from "@/components/projects/featured-projects";
 import { Hero } from "@/components/hero/hero";
+import { SITE_DESCRIPTION } from "@/lib/constants";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
   path: "/",
-  description:
-    "Portfolio of Gent Krasniqi, Frontend / Full Stack Developer — selected projects, skills, and contact.",
+  description: SITE_DESCRIPTION,
 });
 
 export default function Home() {

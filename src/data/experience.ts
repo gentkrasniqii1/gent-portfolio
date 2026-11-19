@@ -6,7 +6,7 @@ export const experience: Experience[] = [
     id: "work-azwedo",
     title: "React.js Intern",
     organization: "Azwedo",
-    location: "Prishtine",
+    location: "Prishtinë",
     startDate: "2023-06",
     endDate: "2024-01",
     description: [
