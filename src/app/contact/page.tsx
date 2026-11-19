@@ -53,7 +53,7 @@ export default function ContactPage() {
             <h1 className="text-display text-foreground">Contact</h1>
             <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
               Tell me about your project, role, or question. I usually reply
-              within a few business days.
+              within 24–48 hours.
             </p>
 
             <div className="space-y-3 text-sm">
