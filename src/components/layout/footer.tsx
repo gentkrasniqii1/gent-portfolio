@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SocialLinks } from "@/components/shared/social-links";
+import { profile } from "@/data/profile";
 import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
 
 export function Footer() {
@@ -8,24 +9,24 @@ export function Footer() {
 
   return (
     <footer className="border-border mt-auto border-t print:hidden">
-      <Container className="flex flex-col gap-8 py-10 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-sm space-y-3">
+      <Container className="flex flex-col gap-5 py-8 md:flex-row md:items-center md:justify-between md:gap-8">
+        <div className="space-y-1">
           <p className="font-display text-foreground text-lg tracking-tight">
             {SITE_NAME}
           </p>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            Full-Stack Developer portfolio — projects, skills, and contact.
+          <p className="text-muted-foreground text-sm">
+            {profile.role}
+            {profile.location ? ` · ${profile.location}` : null}
           </p>
-          <SocialLinks />
         </div>
 
-        <nav aria-label="Footer">
-          <ul className="grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-1">
+        <nav aria-label="Footer" className="-mx-3">
+          <ul className="flex flex-wrap">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center px-3 text-sm transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -36,11 +37,11 @@ export function Footer() {
       </Container>
 
       <div className="border-border border-t">
-        <Container className="text-muted-foreground flex flex-col gap-2 py-4 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <Container className="text-muted-foreground flex items-center justify-between gap-4 py-1 text-xs">
           <p>
-            © {year} {SITE_NAME}. All rights reserved.
+            © {year} {SITE_NAME}
           </p>
-          <p>Built with Next.js</p>
+          <SocialLinks className="-mr-3" />
         </Container>
       </div>
     </footer>
