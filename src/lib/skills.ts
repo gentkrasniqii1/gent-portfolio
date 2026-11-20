@@ -14,10 +14,10 @@ export const SKILL_CATEGORY_LABELS: Record<SkillCategory, string> = {
   frontend: "Frontend",
   backend: "Backend",
   database: "Databases",
-  devops: "DevOps & tooling",
+  devops: "DevOps",
   tools: "Tools",
   practices: "Practices",
-  ai: "AI-Assisted Development",
+  ai: "AI-assisted development",
 };
 
 export function groupSkillsByCategory(
