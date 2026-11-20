@@ -47,7 +47,7 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
       </header>
 
       <CvBlock title="Summary">
-        <p className="text-foreground/90 text-sm leading-relaxed print:text-neutral-800">
+        <p className="text-foreground/90 max-w-prose text-sm leading-relaxed print:max-w-none print:text-neutral-800">
           {identity.summary}
         </p>
       </CvBlock>
@@ -74,7 +74,7 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
                   </p>
                 ) : null}
                 {entry.description.length > 0 ? (
-                  <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+                  <ul className="mt-2 max-w-prose list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:max-w-none print:text-neutral-700">
                     {entry.description.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -102,12 +102,12 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
                   </p>
                 </div>
                 {project.shortDescription ? (
-                  <p className="text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+                  <p className="max-w-prose text-sm leading-relaxed text-muted-foreground print:max-w-none print:text-neutral-700">
                     Stack: {project.shortDescription}
                   </p>
                 ) : null}
                 {project.highlights.length > 0 ? (
-                  <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:text-neutral-700">
+                  <ul className="mt-2 max-w-prose list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-muted-foreground print:max-w-none print:text-neutral-700">
                     {project.highlights.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -118,7 +118,7 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
                     {project.liveUrl ? (
                       <a
                         href={project.liveUrl}
-                        className="text-foreground underline-offset-2 hover:underline print:text-neutral-800 print:no-underline"
+                        className="text-foreground inline-flex min-h-11 items-center underline-offset-2 hover:underline print:inline print:min-h-0 print:text-neutral-800 print:no-underline"
                       >
                         Live
                       </a>
@@ -127,7 +127,7 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
                     {project.githubUrl ? (
                       <a
                         href={project.githubUrl}
-                        className="text-foreground underline-offset-2 hover:underline print:text-neutral-800 print:no-underline"
+                        className="text-foreground inline-flex min-h-11 items-center underline-offset-2 hover:underline print:inline print:min-h-0 print:text-neutral-800 print:no-underline"
                       >
                         GitHub
                       </a>
@@ -222,7 +222,7 @@ export function CvDocument({ data = getCvData() }: { data?: CvData }) {
           </p>
         ) : null}
         {certifications.length > 0 ? (
-          <p className="text-muted-foreground mt-3 text-sm print:text-neutral-700">
+          <p className="text-muted-foreground mt-3 max-w-prose text-sm print:max-w-none print:text-neutral-700">
             <span className="font-medium text-foreground print:text-black">
               Certifications:{" "}
             </span>
