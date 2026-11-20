@@ -28,19 +28,22 @@ type CreateMetadataInput = {
   title?: string;
   description?: string;
   path?: string;
-  image?: string;
   noIndex?: boolean;
 };
+
+/*
+ * Share images come from the `opengraph-image` file conventions (the branded
+ * site image at the root, a per-project one under /projects/[slug]). They take
+ * priority over config metadata, so no image URLs are set here.
+ */
 
 export function createMetadata({
   title,
   description = SITE_DESCRIPTION,
   path = "/",
-  image,
   noIndex = false,
 }: CreateMetadataInput = {}): Metadata {
   const url = absoluteUrl(path);
-  const ogImage = image ? absoluteUrl(image) : absoluteUrl("/opengraph-image");
   const fullTitle = title ?? getDefaultTitle();
 
   const metadata: Metadata = {
@@ -55,20 +58,11 @@ export function createMetadata({
       siteName: profile.name,
       title: fullTitle,
       description,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: fullTitle,
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [ogImage],
     },
     robots: noIndex
       ? {
@@ -88,6 +82,17 @@ export function createMetadata({
   return metadata;
 }
 
+/** "Prizren, Kosovë" → locality "Prizren" (Kosovo's ISO code is XK). */
+function getPostalAddress() {
+  if (!profile.location || isPlaceholder(profile.location)) return undefined;
+  const [locality] = profile.location.split(",").map((part) => part.trim());
+  return {
+    "@type": "PostalAddress",
+    addressLocality: locality,
+    addressCountry: "XK",
+  };
+}
+
 export function getPersonJsonLd() {
   const sameAs = [profile.github, profile.linkedin].filter(
     (value) => !isPlaceholder(value),
@@ -101,16 +106,14 @@ export function getPersonJsonLd() {
     mainEntity: {
       "@type": "Person",
       name: profile.name,
-      jobTitle: profile.role,
+      jobTitle: profile.shortRole,
       description: profile.summary,
       url: absoluteUrl("/"),
+      image: absoluteUrl("/images/profile/gent-portrait.jpg"),
       email: isPlaceholder(profile.email) ? undefined : profile.email,
-      address: isPlaceholder(profile.location)
-        ? undefined
-        : {
-            "@type": "PostalAddress",
-            addressLocality: profile.location,
-          },
+      address: getPostalAddress(),
+      knowsAbout: profile.coreStack,
+      knowsLanguage: profile.languages?.map((language) => language.name),
       sameAs: sameAs.length > 0 ? sameAs : undefined,
     },
   };
