@@ -9,7 +9,11 @@ export const certifications: Certification[] = [
     name: "Front-End Developer",
     issuer: "Shkolla Digjitale, Prizren",
     date: "2022-11-02",
-    image: "/images/certifications/cert-frontend-developer.jpg",
+    image: {
+      src: "/images/certifications/cert-frontend-developer.jpg",
+      width: 1200,
+      height: 870,
+    },
     cvLabel: "Shkolla Digjitale - Frontend Developer",
   },
   {
@@ -17,7 +21,11 @@ export const certifications: Certification[] = [
     name: "Back-End Developer",
     issuer: "Shkolla Digjitale, Prizren",
     date: "2023-06-27",
-    image: "/images/certifications/cert-backend-developer.jpg",
+    image: {
+      src: "/images/certifications/cert-backend-developer.jpg",
+      width: 1200,
+      height: 885,
+    },
     cvLabel: "Shkolla Digjitale - Backend Developer",
   },
   {
@@ -25,7 +33,11 @@ export const certifications: Certification[] = [
     name: "Certificate of Participation — Empowering Prizren's Youth with AI (5-Day Training)",
     issuer: "RDA South (Regional Development Agency)",
     date: "2025-05-21",
-    image: "/images/certifications/cert-ai-training.jpg",
+    image: {
+      src: "/images/certifications/cert-ai-training.jpg",
+      width: 1200,
+      height: 864,
+    },
     cvLabel:
       "RDA - Empowering Prizren's Youth with AI (Certificate of Participation)",
   },
