@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { getContactMailConfig, sendContactEmail } from "@/lib/email";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
-import { contactFormServerSchema, isHoneypotTripped } from "@/lib/validations";
+import {
+  contactFormServerSchema,
+  getFieldErrors,
+  isHoneypotTripped,
+} from "@/lib/validations";
 
 export const runtime = "nodejs";
 
@@ -25,11 +29,14 @@ export async function POST(request: Request) {
   }
 
   if (!getContactMailConfig()) {
+    // Missing env vars are an operator problem; keep the details in the logs.
+    console.error(
+      "[contact] Not configured: set RESEND_API_KEY, CONTACT_TO_EMAIL and CONTACT_FROM_EMAIL.",
+    );
     return NextResponse.json(
       {
         ok: false,
-        error:
-          "Contact form is not configured. Set RESEND_API_KEY, CONTACT_TO_EMAIL, and CONTACT_FROM_EMAIL.",
+        error: "The contact form is unavailable right now.",
       },
       { status: 503 },
     );
@@ -50,8 +57,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Validation failed.",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        error: "Please check the highlighted fields.",
+        fieldErrors: getFieldErrors(parsed.error),
       },
       { status: 400 },
     );
