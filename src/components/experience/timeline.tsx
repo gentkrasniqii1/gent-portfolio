@@ -1,6 +1,7 @@
-import { Stagger, StaggerItem } from "@/components/shared/motion";
+import { StaggerChildren, StaggerItem } from "@/components/motion/stagger";
 import { TechBadge } from "@/components/shared/tech-badge";
 import { formatExperiencePeriod } from "@/lib/experience";
+import { cn } from "@/lib/utils";
 import type { Experience } from "@/types/experience";
 
 type TimelineProps = {
@@ -25,51 +26,72 @@ export function Timeline({ items, emptyMessage }: TimelineProps) {
   }
 
   return (
-    <Stagger
-      as="ol"
-      className="border-border max-w-2xl space-y-0 border-l pl-6"
-    >
-      {items.map((entry) => (
-        <StaggerItem
-          key={entry.id}
-          as="li"
-          className="relative pb-10 last:pb-0"
-        >
-          <span
-            className="border-background bg-primary absolute top-1.5 -left-[1.625rem] size-2.5 rounded-full border-2"
-            aria-hidden
-          />
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-              {formatExperiencePeriod(entry.startDate, entry.endDate)}
-            </p>
-            <span className="bg-muted text-muted-foreground rounded-md px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wide">
-              {TYPE_LABELS[entry.type]}
+    <StaggerChildren as="ol" className="border-border max-w-2xl border-l pl-7">
+      {items.map((entry) => {
+        const current = entry.endDate === "present";
+        return (
+          <StaggerItem
+            key={entry.id}
+            as="li"
+            className="relative pb-10 last:pb-0"
+          >
+            {/* Rail marker; ongoing roles get a soft pulse. */}
+            <span
+              aria-hidden
+              className="absolute top-1 -left-[2.125rem] flex size-3.5 items-center justify-center"
+            >
+              {current ? (
+                <span className="bg-accent/50 absolute inset-0 rounded-full motion-safe:animate-ping" />
+              ) : null}
+              <span
+                className={cn(
+                  "border-background relative size-3.5 rounded-full border-[3px]",
+                  current ? "bg-accent" : "bg-primary",
+                )}
+              />
             </span>
-          </div>
-          <h3 className="text-foreground mt-2 text-xl">{entry.title}</h3>
-          <p className="text-muted-foreground mt-1 text-sm">
-            {entry.organization}
-            {entry.location ? ` · ${entry.location}` : null}
-          </p>
-          {entry.description.length > 0 ? (
-            <ul className="text-muted-foreground mt-3 list-disc space-y-2 pl-4 text-sm leading-relaxed">
-              {entry.description.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-          {entry.technologies && entry.technologies.length > 0 ? (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {entry.technologies.map((tech) => (
-                <li key={tech}>
-                  <TechBadge>{tech}</TechBadge>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </StaggerItem>
-      ))}
-    </Stagger>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
+                {formatExperiencePeriod(entry.startDate, entry.endDate)}
+              </p>
+              <span
+                className={cn(
+                  "rounded-md px-2 py-0.5 text-[0.65rem] font-medium tracking-wide uppercase",
+                  current
+                    ? "bg-accent/10 text-accent"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {current && entry.type !== "education"
+                  ? "Current"
+                  : TYPE_LABELS[entry.type]}
+              </span>
+            </div>
+            <h3 className="text-foreground mt-2 text-xl">{entry.title}</h3>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {entry.organization}
+              {entry.location ? ` · ${entry.location}` : null}
+            </p>
+            {entry.description.length > 0 ? (
+              <ul className="text-muted-foreground mt-3 max-w-prose list-disc space-y-2 pl-4 text-sm leading-relaxed">
+                {entry.description.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            ) : null}
+            {entry.technologies && entry.technologies.length > 0 ? (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {entry.technologies.map((tech) => (
+                  <li key={tech}>
+                    <TechBadge>{tech}</TechBadge>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </StaggerItem>
+        );
+      })}
+    </StaggerChildren>
   );
 }
