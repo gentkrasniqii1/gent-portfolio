@@ -1,5 +1,5 @@
 import { Timeline } from "@/components/experience/timeline";
-import { Reveal } from "@/components/shared/motion";
+import { Reveal } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { getEducation } from "@/lib/experience";
 

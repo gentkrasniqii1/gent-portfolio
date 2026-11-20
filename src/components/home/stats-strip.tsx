@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/container";
 import { CountUp } from "@/components/motion/count-up";
-import { Reveal } from "@/components/shared/motion";
+import { Reveal } from "@/components/motion/reveal";
 import { stats } from "@/data/stats";
 
 export function StatsStrip() {
