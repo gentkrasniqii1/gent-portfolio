@@ -55,11 +55,6 @@
   --shadow-l: 0 12px 32px rgb(18 24 30 / 0.1);
   /* Slightly deeper elevation reserved for hovered/focused cards only */
   --shadow-hover: 0 16px 40px rgb(18 24 30 / 0.14);
-
-  /* Motion — single easing + duration scale, used consistently across components */
-  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-fast: 0.18s;
-  --duration-base: 0.4s;
 }
 
 .dark {
@@ -189,10 +184,18 @@
 /* Keyframe animations. Only transform and opacity are animated, and every
  * usage sits behind `motion-safe:` so reduced-motion users get static content. */
 @theme {
-  --animate-enter: enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-enter-scale: enter-scale 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* The one easing curve used across the site (mirrored in motion/config.ts). */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-enter: enter 0.6s var(--ease-out-expo) both;
+  --animate-enter-scale: enter-scale 0.7s var(--ease-out-expo) both;
   --animate-ring: ring-spin 14s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
+  --animate-icon-in: icon-in 0.45s var(--ease-out-expo) both;
+  --animate-icon-out: icon-out 0.25s ease-in both;
+  --animate-page-enter: page-enter 0.4s var(--ease-out-expo) both;
+  --animate-fade-in: fade-in 0.2s var(--ease-out-expo) both;
+  --animate-zoom-in: zoom-in 0.25s var(--ease-out-expo) both;
 
   /* Entrances start at 0.01 rather than 0: visually identical, but browsers
    * skip fully transparent elements when timing Largest Contentful Paint, so
@@ -227,6 +230,97 @@
       transform: translateY(-6px);
     }
   }
+
+  /* Theme toggle icon swap. These animate the individual rotate/scale
+   * properties because the icons' resting state uses those utilities. */
+  @keyframes icon-in {
+    from {
+      opacity: 0;
+      rotate: -90deg;
+      scale: 0.5;
+    }
+    to {
+      opacity: 1;
+      rotate: 0deg;
+      scale: 1;
+    }
+  }
+
+  /* Client-side navigations: the new page fades and rises in. */
+  @keyframes page-enter {
+    from {
+      opacity: 0.01;
+      translate: 0 10px;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes zoom-in {
+    from {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+
+  @keyframes icon-out {
+    from {
+      opacity: 1;
+      rotate: 0deg;
+      scale: 1;
+    }
+    to {
+      opacity: 0;
+      rotate: 90deg;
+      scale: 0.5;
+    }
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Scroll reveals                                                             */
+/* -------------------------------------------------------------------------- */
+
+/* `data-reveal` elements and the items of a `data-reveal-group` start hidden
+ * and fade/lift in once RevealObserver marks them `data-revealed`. Without
+ * JavaScript the <noscript> rule in the root layout shows them instead. With
+ * reduced motion they simply appear (the global rule zeroes the duration). */
+@layer components {
+  [data-reveal],
+  [data-reveal-item] {
+    transition:
+      opacity 0.55s var(--ease-out-expo),
+      translate 0.55s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal]:not([data-revealed]),
+  [data-reveal-group]:not([data-revealed]) [data-reveal-item] {
+    opacity: 0;
+    translate: 0 20px;
+  }
+}
+
+/* Reading progress bar: driven by the scroll position itself where scroll
+ * timelines are supported (ScrollProgress falls back to a scroll listener). */
+@utility scroll-progress {
+  transform-origin: left center;
+  scale: 0 1;
+
+  @supports (animation-timeline: scroll()) {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes grow-x {
+  to {
+    scale: 1 1;
+  }
 }
 
 /* Faint grid that fades out towards the edges of the hero. */
@@ -240,6 +334,19 @@
     ellipse 70% 65% at 50% 35%,
     #000 30%,
     transparent 100%
+  );
+}
+
+/* Light grid texture for the closing call-to-action band (on primary). */
+@utility cta-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(
+    ellipse 80% 90% at 85% 10%,
+    #000 20%,
+    transparent 75%
   );
 }
 
@@ -287,10 +394,27 @@
       transition-duration: 0.01ms !important;
       transition-delay: 0s !important;
     }
+
+    /* The progress bar follows the scroll position rather than playing an
+     * animation, so it keeps working. */
+    .scroll-progress {
+      animation-duration: auto !important;
+    }
   }
 
   body {
     @apply min-h-full bg-background font-sans text-base text-foreground antialiased;
+  }
+
+  /* Atmosphere gradients pinned to the viewport. A fixed layer instead of
+   * `background-attachment: fixed`, which repaints the whole page on every
+   * scroll frame (and is ignored on iOS). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image:
       radial-gradient(
         ellipse 80% 50% at 50% -20%,
@@ -302,7 +426,6 @@
         var(--surface-mist),
         transparent 50%
       );
-    background-attachment: fixed;
   }
 
   ::selection {
@@ -351,6 +474,10 @@
     background: #ffffff !important;
     background-image: none !important;
     color: #111111 !important;
+  }
+
+  body::before {
+    content: none;
   }
 
   a[href]::after {
