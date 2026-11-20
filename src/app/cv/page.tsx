@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CvActions } from "@/components/cv/cv-actions";
 import { CvDocument } from "@/components/cv/cv-document";
 import { Container } from "@/components/layout/container";
-import { Reveal } from "@/components/shared/motion";
+import { FadeIn } from "@/components/motion/fade-in";
 import { profile } from "@/data/profile";
 import { createMetadata } from "@/lib/seo";
 
@@ -16,7 +16,7 @@ export default function CvPage() {
   return (
     <div className="py-section">
       <Container className="space-y-10">
-        <Reveal className="flex flex-col gap-6 print:hidden sm:flex-row sm:items-end sm:justify-between">
+        <FadeIn className="flex flex-col gap-6 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-xl space-y-3">
             <h1 className="text-display text-foreground">CV</h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
@@ -25,11 +25,11 @@ export default function CvPage() {
             </p>
           </div>
           <CvActions />
-        </Reveal>
+        </FadeIn>
 
-        <Reveal delay={0.08}>
+        <FadeIn delay={90}>
           <CvDocument />
-        </Reveal>
+        </FadeIn>
       </Container>
     </div>
   );

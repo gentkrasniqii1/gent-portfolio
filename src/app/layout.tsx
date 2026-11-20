@@ -59,6 +59,10 @@ const ibmPlexMono = IBM_Plex_Mono({
 /** Analytics endpoints only exist on Vercel; elsewhere they 404 in the console. */
 const IS_VERCEL = Boolean(process.env.VERCEL);
 
+/** Scroll reveals start hidden until JavaScript runs; without it, show them. */
+const NO_SCRIPT_STYLES =
+  "<style>[data-reveal],[data-reveal-item]{opacity:1!important;translate:none!important}</style>";
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
@@ -98,6 +102,9 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${sourceSans.variable} ${newsreader.variable} ${ibmPlexMono.variable} h-full`}
     >
+      <head>
+        <noscript dangerouslySetInnerHTML={{ __html: NO_SCRIPT_STYLES }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <ThemeProvider
           attribute={THEME.attribute}
