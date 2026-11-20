@@ -29,7 +29,9 @@ export function ButtonLink({
 }: ButtonLinkProps) {
   const classes = cn(
     "group/button inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-medium transition-colors",
-    "motion-safe:transition-[colors,transform,box-shadow] motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-sm",
+    // Tailwind's translate utilities use the `translate` property, so that is
+    // what transitions here (alongside the colour changes).
+    "motion-safe:transition-[color,background-color,border-color,translate] motion-safe:hover:-translate-y-0.5",
     variants[variant],
     className,
   );
