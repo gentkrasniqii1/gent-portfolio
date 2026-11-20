@@ -36,7 +36,7 @@ export function ProjectFilters({ active }: ProjectFiltersProps) {
           key={filter.href}
           href={filter.href}
           className={cn(
-            "inline-flex min-h-11 items-center rounded-md px-4 py-2 text-sm transition-colors",
+            "inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm transition-colors",
             filter.isActive
               ? "bg-primary text-primary-foreground"
               : "bg-secondary text-secondary-foreground hover:bg-muted",
