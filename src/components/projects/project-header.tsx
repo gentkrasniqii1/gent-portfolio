@@ -1,123 +1,136 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { FadeIn } from "@/components/motion/fade-in";
+import { ButtonLink } from "@/components/shared/button-link";
 import { GitHubIcon } from "@/components/shared/icons";
-import { Reveal } from "@/components/shared/motion";
 import { TechBadge } from "@/components/shared/tech-badge";
 import {
+  formatProjectDate,
   PROJECT_CATEGORY_LABELS,
   PROJECT_STATUS_LABELS,
-  PROJECT_STATUS_STYLES,
 } from "@/lib/projects";
-import { cn } from "@/lib/utils";
 import type { Project } from "@/types/project";
 
 type ProjectHeaderProps = {
   project: Project;
 };
 
+/** Case-study hero: title, one-liner, key facts, stack, links and cover. */
 export function ProjectHeader({ project }: ProjectHeaderProps) {
-  const hasImage = Boolean(project.image);
+  const facts = [
+    { label: "Role", value: project.role },
+    { label: "Timeline", value: formatProjectDate(project) },
+    { label: "Type", value: PROJECT_CATEGORY_LABELS[project.category] },
+    { label: "Status", value: PROJECT_STATUS_LABELS[project.status] },
+  ];
 
   return (
-    <header className="space-y-8">
-      <Link
-        href="/projects"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
-      >
-        <ArrowLeft className="size-4" aria-hidden />
-        All projects
-      </Link>
+    <header>
+      <FadeIn>
+        <Link
+          href="/projects"
+          className="group/back text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
+        >
+          <ArrowLeft
+            className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover/back:-translate-x-0.5"
+            aria-hidden
+          />
+          All projects
+        </Link>
+      </FadeIn>
 
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="font-mono uppercase tracking-widest text-muted-foreground">
-            {project.year}
-          </span>
-          <span className="text-border" aria-hidden>
-            ·
-          </span>
-          <span className="text-muted-foreground">
-            {PROJECT_CATEGORY_LABELS[project.category]}
-          </span>
-          <span
-            className={cn(
-              "rounded-md px-2 py-0.5 font-medium",
-              PROJECT_STATUS_STYLES[project.status],
-            )}
-          >
-            {PROJECT_STATUS_LABELS[project.status]}
-          </span>
-        </div>
-
-        <h1 className="text-display text-foreground max-w-3xl break-words">
+      <FadeIn delay={45} className="mt-6">
+        <p className="text-accent font-mono text-xs tracking-[0.18em] uppercase">
+          Case study
+        </p>
+        <h1 className="text-display text-foreground mt-3 max-w-3xl break-words">
           {project.title}
         </h1>
-
-        <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
+        <p className="text-foreground/80 mt-5 max-w-2xl text-lg leading-relaxed md:text-xl">
           {project.shortDescription}
         </p>
+      </FadeIn>
 
-        <p className="text-muted-foreground text-sm">
-          Role: <span className="text-foreground">{project.role}</span>
-        </p>
-      </div>
+      <FadeIn delay={90}>
+        <dl className="border-border mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-y py-6 sm:grid-cols-4">
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <dt className="text-muted-foreground font-mono text-[11px] tracking-[0.14em] uppercase">
+                {fact.label}
+              </dt>
+              <dd className="text-foreground mt-1.5 text-sm font-medium">
+                {fact.label === "Status" && project.status === "live" ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      aria-hidden
+                      className="bg-accent size-1.5 rounded-full"
+                    />
+                    {fact.value}
+                  </span>
+                ) : (
+                  fact.value
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </FadeIn>
 
-      <div className="flex flex-wrap gap-3">
-        {project.liveUrl ? (
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-medium shadow-sm transition-colors"
-          >
-            Live demo
-            <ArrowUpRight className="ml-2 size-4" aria-hidden />
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
+      <FadeIn
+        delay={135}
+        className="mt-6 flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
+      >
+        {project.technologies.length > 0 ? (
+          <ul className="flex flex-wrap gap-2" aria-label="Tech stack">
+            {project.technologies.map((tech) => (
+              <li key={tech}>
+                <TechBadge>{tech}</TechBadge>
+              </li>
+            ))}
+          </ul>
         ) : null}
-        {project.githubUrl ? (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border-border bg-background text-foreground hover:bg-muted inline-flex h-11 items-center justify-center gap-2 rounded-md border px-5 text-sm font-medium transition-colors"
-          >
-            <GitHubIcon className="size-4" />
-            View code
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-        ) : null}
-      </div>
 
-      <Reveal>
-        <div className="border-border bg-muted relative aspect-[16/9] overflow-hidden rounded-lg border shadow-sm">
-          {hasImage ? (
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          {project.liveUrl ? (
+            <ButtonLink href={project.liveUrl} external>
+              Visit live site
+              <ArrowUpRight
+                className="size-4 transition-transform duration-200 group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5"
+                aria-hidden
+              />
+              <span className="sr-only">(opens in a new tab)</span>
+            </ButtonLink>
+          ) : null}
+          {project.githubUrl ? (
+            <ButtonLink href={project.githubUrl} external variant="secondary">
+              <GitHubIcon className="size-4" />
+              View code
+              <span className="sr-only">(opens in a new tab)</span>
+            </ButtonLink>
+          ) : null}
+        </div>
+      </FadeIn>
+
+      <FadeIn delay={180} variant="scale" className="mt-10">
+        <div className="border-border bg-muted relative aspect-[16/10] overflow-hidden rounded-xl border shadow-md">
+          {project.image ? (
             <Image
               src={project.image}
               alt={project.imageAlt}
               fill
-              preload
+              loading="eager"
+              fetchPriority="high"
               className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 960px"
+              sizes="(min-width: 1024px) 960px, 100vw"
             />
           ) : (
-            <div className="text-muted-foreground flex h-full items-center justify-center font-mono text-xs uppercase tracking-widest">
+            <div className="text-muted-foreground flex h-full items-center justify-center font-mono text-xs tracking-widest uppercase">
               {project.title}
             </div>
           )}
         </div>
-      </Reveal>
-
-      {project.technologies.length > 0 ? (
-        <ul className="flex flex-wrap gap-2">
-          {project.technologies.map((tech) => (
-            <li key={tech}>
-              <TechBadge>{tech}</TechBadge>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      </FadeIn>
     </header>
   );
 }
