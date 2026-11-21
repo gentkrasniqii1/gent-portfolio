@@ -9,6 +9,22 @@ import {
 
 export const runtime = "nodejs";
 
+/** The page the form was sent from, if the Referer is this same site. */
+function getSourcePage(request: Request) {
+  const referer = request.headers.get("referer");
+  if (!referer) return undefined;
+  try {
+    const source = new URL(referer);
+    const target = new URL(request.url);
+    const sameSite = source.host === target.host;
+    return sameSite && /^https?:$/.test(source.protocol)
+      ? source.toString()
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function POST(request: Request) {
   const ip = getClientIp(request);
   const limited = rateLimit(`contact:${ip}`, 5, 60_000);
@@ -71,7 +87,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    await sendContactEmail(payload);
+    await sendContactEmail({
+      ...payload,
+      pageUrl: getSourcePage(request),
+      sentAt: new Date(),
+    });
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message =

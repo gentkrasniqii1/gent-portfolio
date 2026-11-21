@@ -15,12 +15,27 @@ export const projects: Project[] = [
     title: "Velnora",
     headline: "Velnora — Digital agency website",
     shortDescription:
-      "Bilingual (Albanian/English) website for a Kosovo-based digital agency, with services, a five-step process, pricing tiers, an FAQ and a project inquiry form.",
+      "Bilingual (Albanian/English) website for a Kosovo-based digital agency, backed by a Laravel API, a Filament admin panel and an AI chat assistant.",
     description:
-      "Velnora is a Kosovo-based digital agency that turns ideas into digital products. Its website has to explain what the agency does, how a project runs and what it costs — in both Albanian and English — and give visitors an easy way to start a project. It presents the agency's services (web development, UI/UX design, AI & automation, e-commerce and maintenance), a five-step process timeline, three pricing tiers and an FAQ, and ends in a project inquiry form, with privacy and cookie settings throughout.",
+      "Velnora is a Kosovo-based digital agency that turns ideas into digital products. Its website has to explain what the agency does, how a project runs and what it costs — in both Albanian and English — and give visitors an easy way to start a project. It presents the agency's services (web development, UI/UX design, AI & automation, e-commerce and maintenance), a five-step process timeline, three pricing tiers and an FAQ, and ends in a project inquiry form, with privacy and cookie settings throughout. Behind the site runs a separate Laravel API with an admin panel for content and leads, and an AI chat assistant that can hand a conversation over to a person.",
     category: "web",
-    // TODO: add the rest of the Velnora stack (e.g. i18n, forms, hosting).
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+    technologies: [
+      "Laravel 13",
+      "PHP 8.4",
+      "PostgreSQL",
+      "Filament",
+      "REST API",
+      "SSE",
+      "Claude API",
+      "Laravel Queues",
+      "PHPUnit",
+      "Larastan",
+      "GitHub Actions",
+      "Laravel Cloud",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+    ],
     image: "/images/projects/velnora/cover.jpg",
     imageAlt:
       "Velnora homepage in a desktop browser and on a phone: a dark hero with the headline “Nga ideja te produkti digjital.” beside a glowing green V",
@@ -63,59 +78,70 @@ export const projects: Project[] = [
     // TODO: set the launch month (1–12) for Velnora.
     month: undefined,
     status: "live",
-    // TODO: confirm the exact Velnora role (e.g. "Founder, designer & developer").
-    role: "Designer & developer",
-    // TODO: confirm or refine the Velnora responsibilities.
+    role: "Backend Developer",
     responsibilities: [
-      "Designed the interface for desktop and mobile",
-      "Built the site with Next.js, TypeScript and Tailwind CSS",
-      "Deployed and launched it at velnora-ks.com",
+      "Built the Laravel 13 / PHP 8.4 backend (velnora-api): a versioned JSON REST API (/api/v1) for services, projects, testimonials and leads, with Albanian/English content and ETag caching",
+      "Built a Filament admin panel (CMS) for services, projects and testimonials in both languages, with lead management (status, notes, contacted time), admin/editor roles and mandatory two-factor authentication for admins",
+      "Handled project inquiries end to end: a validated form API, Cloudflare Turnstile checked on the server, rate limiting, leads stored in PostgreSQL, and team notifications plus automatic replies sent from a queue with Laravel Mail",
+      "Built an AI chat assistant on the Claude API (Claude Haiku 5.5) with replies streamed over Server-Sent Events, a curated knowledge base, tool use, prompt caching, daily cost limits and handoff to a person through a live chat inbox in the admin panel",
+      "Protected personal data: hashed IP addresses, personal data redacted before anything reaches the AI, and scheduled retention clean-up and erasure",
+      "Set up quality and delivery: 800+ PHPUnit tests, Larastan (PHPStan level 5) and Pint in GitHub Actions CI, Dependabot and gitleaks, with automatic deploys to Laravel Cloud",
     ],
-    outcome: "Live in Albanian and English, with pricing and an inquiry form",
+    outcome: "Live Laravel API with an admin CMS, AI chat and 800+ tests",
     features: [
       {
         icon: "languages",
         title: "Bilingual SQ / EN",
         description:
-          "Every section is available in Albanian and English, with a language switch in the header.",
+          "Every section is available in Albanian and English; content is stored in both languages and served by locale from the API.",
+      },
+      {
+        icon: "chat",
+        title: "AI chat assistant",
+        description:
+          "Answers stream in from the Claude API, grounded in a curated knowledge base, and a person can take over from a live inbox in the admin panel.",
       },
       {
         icon: "layers",
-        title: "Five service lines",
+        title: "Admin CMS",
         description:
-          "Web development, UI/UX design, AI & automation, e-commerce and maintenance, each presented as a clear offer.",
-      },
-      {
-        icon: "timeline",
-        title: "Five-step process",
-        description:
-          "A timeline that shows clients how a project moves from idea to finished product.",
-      },
-      {
-        icon: "pricing",
-        title: "Three pricing tiers",
-        description:
-          "Three packages so clients can compare scope and cost up front.",
+          "A Filament panel for services, projects, testimonials and leads, with admin/editor roles and two-factor sign-in for admins.",
       },
       {
         icon: "form",
         title: "Project inquiry form",
         description:
-          "An FAQ answers common questions, then a form lets visitors describe their project and send it to the agency.",
+          "Checked with Cloudflare Turnstile and rate limiting, saved as a lead, and followed by queued emails to the team and the client.",
       },
       {
-        icon: "cookie",
-        title: "Privacy & cookie settings",
+        icon: "timeline",
+        title: "Services, process & pricing",
         description:
-          "A privacy policy and cookie settings that let visitors choose which optional cookies to allow.",
+          "Five service lines, a five-step process timeline and three pricing tiers, with an FAQ before the inquiry form.",
+      },
+      {
+        icon: "shield",
+        title: "Privacy by design",
+        description:
+          "Cookie settings for visitors; IP hashing, redaction before the AI sees a message, and old data deleted on a schedule.",
       },
     ],
-    // TODO: add Velnora's technical decisions (routing for the two languages, form handling, hosting).
-    architecture: ["Next.js and TypeScript, styled with Tailwind CSS"],
+    architecture: [
+      "Next.js frontend on Cloudflare Workers, talking to a separate Laravel 13 API at api.velnora-ks.com behind Cloudflare DNS",
+      "Versioned JSON REST API (/api/v1) with locale-aware responses and ETag caching; chat replies stream over Server-Sent Events",
+      "PostgreSQL on Neon in production and SQLite for local development and tests, with bilingual fields via spatie/laravel-translatable",
+      "Filament (Livewire) admin panel with admin/editor roles, two-factor authentication and its own Content Security Policy",
+      "Laravel Queues (database driver) for email and Laravel Scheduler for data-retention clean-up",
+      "AI layer behind swappable drivers: it started on Gemini and now runs on the Claude API with tool use and prompt caching",
+      "Deployed automatically from GitHub to Laravel Cloud; CI runs PHPUnit, Pint and Larastan, with Dependabot and gitleaks",
+    ],
     // TODO: add Velnora's main challenges and how you solved them.
     challenges: [],
     // TODO: add measurable Velnora outcomes (inquiries, Lighthouse scores, client feedback) once known.
-    results: ["Live in production at velnora-ks.com, in Albanian and English."],
+    results: [
+      "Live in production at velnora-ks.com, in Albanian and English, with the API at api.velnora-ks.com.",
+      "800+ automated PHPUnit tests and Larastan (level 5) static analysis run in GitHub Actions CI.",
+    ],
   },
   {
     id: "prizren-smart-city",
