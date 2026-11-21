@@ -1,33 +1,10 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import { ContactForm } from "@/components/contact/contact-form";
 import { Container } from "@/components/layout/container";
-import { Reveal } from "@/components/shared/motion";
+import { FadeIn } from "@/components/motion/fade-in";
 import { SocialLinks } from "@/components/shared/social-links";
 import { SOCIAL_LINKS } from "@/lib/constants";
 import { createMetadata } from "@/lib/seo";
-
-const ContactForm = dynamic(
-  () =>
-    import("@/components/contact/contact-form").then(
-      (module) => module.ContactForm,
-    ),
-  {
-    loading: () => (
-      <div
-        className="space-y-4"
-        aria-busy="true"
-        aria-live="polite"
-        aria-label="Loading contact form"
-      >
-        <div className="bg-muted h-11 animate-pulse rounded-md" />
-        <div className="bg-muted h-11 animate-pulse rounded-md" />
-        <div className="bg-muted h-11 animate-pulse rounded-md" />
-        <div className="bg-muted h-32 animate-pulse rounded-md" />
-        <div className="bg-muted h-11 w-40 animate-pulse rounded-md" />
-      </div>
-    ),
-  },
-);
 
 export const metadata: Metadata = createMetadata({
   title: "Contact",
@@ -48,12 +25,12 @@ export default function ContactPage() {
   return (
     <div className="py-section">
       <Container className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:gap-16">
-        <Reveal>
+        <FadeIn>
           <div className="space-y-6">
             <h1 className="text-display text-foreground">Contact</h1>
             <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
               Tell me about your project, role, or question. I usually reply
-              within a few business days.
+              within 24–48 hours.
             </p>
 
             <div className="space-y-3 text-sm">
@@ -75,9 +52,9 @@ export default function ContactPage() {
               <SocialLinks />
             </div>
           </div>
-        </Reveal>
+        </FadeIn>
 
-        <Reveal delay={0.08}>
+        <FadeIn delay={90}>
           <div className="border-border bg-card rounded-lg border p-6 shadow-sm sm:p-8">
             <h2
               id="contact-form-heading"
@@ -85,9 +62,21 @@ export default function ContactPage() {
             >
               Send a message
             </h2>
+            <noscript>
+              <p className="border-border bg-muted text-foreground mb-6 rounded-md border px-4 py-3 text-sm leading-relaxed">
+                This form needs JavaScript. You can email me directly at{" "}
+                <a
+                  href={`mailto:${SOCIAL_LINKS.email}`}
+                  className="font-medium underline underline-offset-4"
+                >
+                  {SOCIAL_LINKS.email}
+                </a>
+                .
+              </p>
+            </noscript>
             <ContactForm />
           </div>
-        </Reveal>
+        </FadeIn>
       </Container>
     </div>
   );

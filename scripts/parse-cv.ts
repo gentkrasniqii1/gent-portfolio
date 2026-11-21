@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFParse } from "pdf-parse";
+import { format, resolveConfig } from "prettier";
 import type { CvData } from "../src/types/cv";
 import { CvValidationError, parseCvText } from "./cv-parser";
 
@@ -99,27 +100,30 @@ function serializeValue(value: unknown, indent = 0): string {
     .join(",\n")}\n${pad}}`;
 }
 
+const GENERATED_AT_PATTERN = /generatedAt: "[^"]*"/;
+
 function buildGeneratedFile(
   data: CvData,
   warnings: string[],
   sourcePath: string,
+  generatedAt: string,
 ) {
-  const generatedAt = new Date().toISOString();
+  // Repo-relative so the output is identical on every machine.
+  const relativeSource = path.relative(ROOT, sourcePath).replace(/\\/g, "/");
   const warningBlock =
     warnings.length > 0
       ? `\n/** Parser warnings:\n${warnings.map((warning) => ` * - ${warning}`).join("\n")}\n */`
       : "";
 
   return `/** AUTO-GENERATED — do not edit manually.
- * Source: ${sourcePath.replace(/\\/g, "/")}
- * Generated: ${generatedAt}
+ * Source: ${relativeSource}
  */${warningBlock}
 import type { CvData, CvParseMeta } from "@/types/cv";
 
 export const CV_PDF_PATH = "/documents/cv.pdf";
 
 export const CV_PARSE_META: CvParseMeta = ${serializeValue({
-    sourcePath: sourcePath.replace(/\\/g, "/"),
+    sourcePath: relativeSource,
     generatedAt,
     warnings,
   })};
@@ -130,6 +134,16 @@ export function getCvData(): CvData {
   return CV_DATA;
 }
 `;
+}
+
+/** Format with the repo's Prettier config so the output passes lint-staged. */
+async function formatGenerated(source: string) {
+  const options = await resolveConfig(OUTPUT_PATH);
+  return format(source, { ...options, filepath: OUTPUT_PATH });
+}
+
+function withoutTimestamp(source: string) {
+  return source.replace(GENERATED_AT_PATTERN, 'generatedAt: ""');
 }
 
 async function hasPreviousGenerated(): Promise<boolean> {
@@ -180,11 +194,24 @@ async function main() {
       console.warn(`[parse-cv] ${warning}`);
     }
 
-    await fs.writeFile(
-      OUTPUT_PATH,
-      buildGeneratedFile(data, warnings, pdfPath),
+    const output = await formatGenerated(
+      buildGeneratedFile(data, warnings, pdfPath, new Date().toISOString()),
     );
-    console.log(`[parse-cv] Wrote ${path.relative(ROOT, OUTPUT_PATH)}`);
+    const previous = await fs.readFile(OUTPUT_PATH, "utf8").catch(() => null);
+    const relativeOutput = path.relative(ROOT, OUTPUT_PATH);
+
+    // Only the timestamp differs when the PDF is unchanged; keep the file
+    // untouched so builds don't leave a diff behind.
+    if (
+      previous !== null &&
+      withoutTimestamp(previous) === withoutTimestamp(output)
+    ) {
+      console.log(`[parse-cv] ${relativeOutput} is up to date`);
+      return;
+    }
+
+    await fs.writeFile(OUTPUT_PATH, output);
+    console.log(`[parse-cv] Wrote ${relativeOutput}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[parse-cv] Failed to parse CV PDF: ${message}`);

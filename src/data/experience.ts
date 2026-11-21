@@ -3,10 +3,24 @@ import type { Experience } from "@/types/experience";
 /** Experience & education timeline — populate with real entries only. */
 export const experience: Experience[] = [
   {
+    id: "work-speeex",
+    // TODO: confirm the exact SPEEEX job title.
+    title: "IT Assistant",
+    organization: "SPEEEX",
+    // TODO: add the SPEEEX location (city, or "Remote").
+    location: undefined,
+    startDate: "2026-10",
+    endDate: "present",
+    // TODO: add 2–3 SPEEEX bullets (responsibilities, tools, impact).
+    description: [],
+    type: "work",
+  },
+  {
     id: "work-azwedo",
     title: "React.js Intern",
     organization: "Azwedo",
-    location: "Prishtine",
+    location: "Prishtinë",
+    // TODO: confirm the internship dates (6 months per the CV; these span Jun 2023 – Jan 2024).
     startDate: "2023-06",
     endDate: "2024-01",
     description: [

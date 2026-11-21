@@ -3,10 +3,25 @@ export interface SpokenLanguage {
   proficiency: string;
 }
 
+export interface Availability {
+  /** e.g. "Open to frontend/full-stack roles" */
+  label: string;
+  /** e.g. "Remote or Kosovo" */
+  detail: string;
+}
+
 export interface Profile {
   name: string;
   role: string;
+  /** Role without the qualifier, for compact labels such as the hero eyebrow. */
+  shortRole: string;
   headline: string;
+  /** One-line value proposition shown under the name in the hero. */
+  tagline: string;
+  /** Core stack named in the hero, in display order. */
+  coreStack: string[];
+  /** Shown next to the status dot while `availableForWork` is true. */
+  availability: Availability;
   summary: string;
   location?: string;
   phone?: string;

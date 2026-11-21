@@ -76,8 +76,21 @@ function slugify(value: string, index: number) {
   return slug || `item-${index}`;
 }
 
+/** Spelling corrections for text extracted from the PDF (missing diacritics). */
+const TEXT_CORRECTIONS: ReadonlyArray<[RegExp, string]> = [
+  [/\bKosove\b/g, "Kosov\u00EB"],
+  [/\bPrishtine\b/g, "Prishtin\u00EB"],
+];
+
+export function applyTextCorrections(value: string) {
+  return TEXT_CORRECTIONS.reduce(
+    (text, [pattern, replacement]) => text.replace(pattern, replacement),
+    value,
+  );
+}
+
 function splitLines(text: string) {
-  return text
+  return applyTextCorrections(text)
     .replace(/\uFEFF/g, "")
     .replace(/\r/g, "")
     .split("\n")
@@ -171,15 +184,21 @@ function toHttpsUrl(value: string) {
   return `https://${trimmed.replace(/^\/\//, "")}`;
 }
 
+/** A bare `github.com/<user>` link is a profile, not a project repository. */
+export function isGitHubProfileUrl(url: string) {
+  return /^https?:\/\/(www\.)?github\.com\/[^/\s]+\/?$/i.test(url);
+}
+
 function parseLiveCodeLine(line: string) {
   const liveMatch = line.match(/Live:\s*([^|]+)/i);
   const codeMatch = line.match(/Code:\s*(.+)$/i);
   const liveLabel = liveMatch?.[1]?.trim();
   const codeLabel = codeMatch?.[1]?.trim();
+  const codeUrl = codeLabel ? toHttpsUrl(codeLabel) : undefined;
 
   return {
     liveUrl: liveLabel ? toHttpsUrl(liveLabel) : undefined,
-    githubUrl: codeLabel ? toHttpsUrl(codeLabel) : undefined,
+    githubUrl: codeUrl && !isGitHubProfileUrl(codeUrl) ? codeUrl : undefined,
   };
 }
 

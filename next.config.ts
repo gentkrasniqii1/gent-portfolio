@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   images: {
     formats: ["image/avif", "image/webp"],
+    // 90 is reserved for certificate scans, where small text must stay legible.
+    qualities: [75, 90],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   async headers() {

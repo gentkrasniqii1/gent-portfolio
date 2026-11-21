@@ -5,10 +5,18 @@
 export const SITE_NAME = "Gent Krasniqi";
 
 export const SITE_DESCRIPTION =
-  "Frontend / Full Stack Developer portfolio — projects, skills, and contact.";
+  "Portfolio of Gent Krasniqi, a frontend-focused full-stack developer building production web apps with Next.js, React, TypeScript, NestJS, Node.js, and PostgreSQL.";
 
+/**
+ * Canonical origin for metadata, the sitemap and JSON-LD. Falls back to the
+ * production domain Vercel exposes at build time, so absolute URLs stay
+ * correct even if NEXT_PUBLIC_SITE_URL is not set.
+ */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
 
 export const SOCIAL_LINKS = {
   github: "https://github.com/gentkrasniqii1",

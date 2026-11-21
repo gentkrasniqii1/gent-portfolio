@@ -1,46 +1,27 @@
-import { SkillGroup } from "@/components/skills/skill-group";
-import { Reveal } from "@/components/shared/motion";
+import { Reveal } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/shared/section-heading";
+import { SkillsGrid } from "@/components/skills/skills-grid";
 import { skills } from "@/data/skills";
-import {
-  groupSkillsByCategory,
-  SKILL_CATEGORY_LABELS,
-  SKILL_CATEGORY_ORDER,
-} from "@/lib/skills";
 
 export function SkillsSection() {
-  const grouped = groupSkillsByCategory(skills);
-  const hasSkills = skills.length > 0;
-
   return (
-    <Reveal>
-      <section aria-labelledby="skills-heading" className="space-y-8">
+    <section aria-labelledby="skills-heading" className="space-y-8">
+      <Reveal>
         <SectionHeading
           id="skills-heading"
           eyebrow="Skills"
           title="Technical toolkit"
-          description="Technologies and tools I use to design, build, and ship software."
+          description="Technologies and tools I use to design, build and ship software."
         />
+      </Reveal>
 
-        {!hasSkills ? (
-          <p className="text-muted-foreground max-w-xl text-sm leading-relaxed">
-            Skills will appear here once added.
-          </p>
-        ) : (
-          <div className="grid gap-8 sm:grid-cols-2">
-            {SKILL_CATEGORY_ORDER.map((category) => {
-              const items = grouped[category] ?? [];
-              return (
-                <SkillGroup
-                  key={category}
-                  title={SKILL_CATEGORY_LABELS[category]}
-                  skills={items}
-                />
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </Reveal>
+      {skills.length === 0 ? (
+        <p className="text-muted-foreground max-w-xl text-sm leading-relaxed">
+          Skills will appear here once added.
+        </p>
+      ) : (
+        <SkillsGrid skills={skills} />
+      )}
+    </section>
   );
 }

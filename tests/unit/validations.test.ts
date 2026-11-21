@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   contactFormSchema,
   contactFormServerSchema,
+  getFieldErrors,
   isHoneypotTripped,
 } from "@/lib/validations";
 
@@ -35,6 +36,15 @@ describe("contactFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("trims whitespace before validating", () => {
+    const result = contactFormSchema.safeParse({
+      ...valid,
+      email: "  jane@example.com  ",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.email).toBe("jane@example.com");
+  });
+
   it("rejects a too-short message", () => {
     const result = contactFormSchema.safeParse({
       ...valid,
@@ -57,6 +67,25 @@ describe("contactFormServerSchema", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(isHoneypotTripped(result.data.website)).toBe(true);
+    }
+  });
+});
+
+describe("getFieldErrors", () => {
+  it("maps validation issues to the fields that caused them", () => {
+    const result = contactFormServerSchema.safeParse({
+      name: "J",
+      email: "nope",
+      subject: "Hi there",
+      message: "Long enough message body.",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const errors = getFieldErrors(result.error);
+      expect(errors.name?.[0]).toBe("Name must be at least 2 characters");
+      expect(errors.email?.[0]).toBe("Enter a valid email address");
+      expect(errors.subject).toBeUndefined();
     }
   });
 });

@@ -1,4 +1,4 @@
-import { Reveal } from "@/components/shared/motion";
+import { Reveal } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { profile } from "@/data/profile";
 

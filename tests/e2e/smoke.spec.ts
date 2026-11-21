@@ -21,6 +21,52 @@ test.describe("smoke", () => {
     ).toBeVisible();
   });
 
+  test("mobile menu traps focus and closes on Escape", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+
+    const toggle = page.getByRole("button", { name: "Open menu" });
+    await toggle.click();
+    const menu = page.getByRole("navigation", { name: "Mobile" });
+    await expect(menu).toBeVisible();
+
+    // Tabbing past the last item wraps back to the menu button.
+    for (let i = 0; i < 12; i += 1) await page.keyboard.press("Tab");
+    const focusedInside = await page.evaluate(
+      () =>
+        document.activeElement?.closest("header") !== null &&
+        document.activeElement !== document.body,
+    );
+    expect(focusedInside).toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect(menu).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
+  });
+
+  test("case study screenshots open in a keyboard-friendly lightbox", async ({
+    page,
+  }) => {
+    await page.goto("/projects/velnora");
+
+    const firstShot = page
+      .getByRole("button", { name: /^View larger:/ })
+      .first();
+    await firstShot.scrollIntoViewIfNeeded();
+    await firstShot.click();
+
+    const dialog = page.getByRole("dialog", { name: "Velnora screenshots" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toContainText("1 / 4");
+
+    await page.keyboard.press("ArrowRight");
+    await expect(dialog).toContainText("2 / 4");
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(firstShot).toBeFocused();
+  });
+
   test("contact form shows validation errors on invalid submit", async ({
     page,
   }) => {

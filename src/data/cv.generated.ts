@@ -1,14 +1,13 @@
 /** AUTO-GENERATED — do not edit manually.
- * Source: C:/Users/gentk/Desktop/gent-portfolio/public/documents/cv.pdf
- * Generated: 2026-08-28T22:25:09.130Z
+ * Source: public/documents/cv.pdf
  */
 import type { CvData, CvParseMeta } from "@/types/cv";
 
 export const CV_PDF_PATH = "/documents/cv.pdf";
 
 export const CV_PARSE_META: CvParseMeta = {
-  sourcePath: "C:/Users/gentk/Desktop/gent-portfolio/public/documents/cv.pdf",
-  generatedAt: "2026-08-28T22:25:09.130Z",
+  sourcePath: "public/documents/cv.pdf",
+  generatedAt: "2026-11-19T08:28:25.566Z",
   warnings: [],
 };
 
@@ -20,7 +19,7 @@ export const CV_DATA: CvData = {
     summary:
       "Frontend-focused Computer Science student with hands-on experience building responsive, full-stack web applications using React.js, Vue.js, Node.js, and Laravel. Shipped and deployed multiple production applications, including a full-stack recruitment platform with real-time features and a civic-tech AI platform. Completed a 6-month professional React.js internship. Comfortable working across the stack with AI-assisted tools (Cursor, GitHub Copilot) while understanding the underlying logic well enough to debug, extend, and explain it.",
     contactBits: [
-      "Prizren, Kosove",
+      "Prizren, Kosovë",
       "+383 49 168 682",
       "gentkrass21@gmail.com",
       "linkedin.com/in/gent-krasniqi-19736a355",
@@ -31,8 +30,8 @@ export const CV_DATA: CvData = {
   },
   experience: [
     {
-      id: "react-js-intern-azwedo-prishtine",
-      title: "React.js Intern - Azwedo, Prishtine",
+      id: "react-js-intern-azwedo-prishtin",
+      title: "React.js Intern - Azwedo, Prishtinë",
       organization: "",
       period: "Jun 2023 - Jan 2024",
       description: [
@@ -55,7 +54,6 @@ export const CV_DATA: CvData = {
         "Integrated Google Calendar/Zoom for auto-generated meeting links and Resend for transactional email delivery",
       ],
       liveUrl: "https://skillmatchapp.com",
-      githubUrl: "https://github.com/gentkrasniqii1",
     },
     {
       id: "prizren-smart-city-ai-powered-civic-issue-reporting-platform",

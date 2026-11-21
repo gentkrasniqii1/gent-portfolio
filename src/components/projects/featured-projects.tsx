@@ -1,7 +1,7 @@
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { Container } from "@/components/layout/container";
 import { ButtonLink } from "@/components/shared/button-link";
-import { Reveal } from "@/components/shared/motion";
+import { Reveal } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { getFeaturedProjects } from "@/lib/projects";
 
@@ -34,6 +34,7 @@ export function FeaturedProjects() {
 
         <ProjectGrid
           projects={featured}
+          leadFirst
           emptyMessage="Featured projects will appear here once published."
         />
       </Container>

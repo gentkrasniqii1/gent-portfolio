@@ -5,6 +5,7 @@ import { EducationList } from "@/components/about/education-list";
 import { LanguagesList } from "@/components/about/languages-list";
 import { ExperienceSection } from "@/components/experience/experience-section";
 import { Container } from "@/components/layout/container";
+import { FadeIn } from "@/components/motion/fade-in";
 import { ButtonLink } from "@/components/shared/button-link";
 import { SkillsSection } from "@/components/skills/skills-section";
 import { createMetadata } from "@/lib/seo";
@@ -20,22 +21,23 @@ export default function AboutPage() {
   return (
     <div className="py-section">
       <Container className="space-y-16 md:space-y-20">
-        <div className="max-w-2xl space-y-4">
+        <FadeIn className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">About</h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Background, skills, certifications, experience, and education.
+            Experience, skills, credentials and education — the background
+            behind the work.
           </p>
           <ButtonLink href="/contact" variant="secondary" className="mt-2">
             Get in touch
           </ButtonLink>
-        </div>
+        </FadeIn>
 
         <AboutSummary />
-        <LanguagesList />
+        <ExperienceSection />
         <SkillsSection />
         <CertificationsList />
-        <ExperienceSection />
         <EducationList />
+        <LanguagesList />
       </Container>
     </div>
   );

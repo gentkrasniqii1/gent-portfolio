@@ -5,6 +5,7 @@ import {
 } from "@/components/projects/project-filters";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { Container } from "@/components/layout/container";
+import { FadeIn } from "@/components/motion/fade-in";
 import { projects } from "@/data/projects";
 import { getProjects } from "@/lib/projects";
 import { createMetadata } from "@/lib/seo";
@@ -30,20 +31,24 @@ export default async function ProjectsPage({
   return (
     <div className="py-section">
       <Container className="space-y-10">
-        <div className="max-w-2xl space-y-4">
+        <FadeIn className="max-w-2xl space-y-4">
           <h1 className="text-display text-foreground">Projects</h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
             {projects.length === 0
               ? "Selected work will appear here as projects are published."
               : "A living archive of selected software projects and case studies."}
           </p>
-        </div>
+        </FadeIn>
 
-        <ProjectFilters active={category} />
+        <FadeIn delay={60}>
+          <ProjectFilters active={category} />
+        </FadeIn>
 
         <ProjectGrid
           projects={filtered}
           titleAs="h2"
+          eagerCount={2}
+          reveal="load"
           emptyMessage={
             projects.length === 0
               ? "No projects published yet."

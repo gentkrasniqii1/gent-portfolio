@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProjectDetails } from "@/components/projects/project-details";
 import { Container } from "@/components/layout/container";
-import { getAllProjectSlugs, getProjectBySlug } from "@/lib/projects";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
+import {
+  getAllProjectSlugs,
+  getNextProject,
+  getProjectBySlug,
+} from "@/lib/projects";
 import { createMetadata } from "@/lib/seo";
 
 type ProjectPageProps = {
@@ -28,10 +33,9 @@ export async function generateMetadata({
   }
 
   return createMetadata({
-    title: project.title,
+    title: project.headline ?? project.title,
     description: project.shortDescription,
     path: `/projects/${project.slug}`,
-    image: project.image || undefined,
   });
 }
 
@@ -45,8 +49,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <div className="py-section">
+      <ScrollProgress />
       <Container>
-        <ProjectDetails project={project} />
+        <ProjectDetails
+          project={project}
+          nextProject={getNextProject(project.slug)}
+        />
       </Container>
     </div>
   );
