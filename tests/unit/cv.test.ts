@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { CV_PDF_PATH, getCvData, getCvPdfFilename } from "@/data/cv";
+import { SOCIAL_LINKS } from "@/lib/constants";
 
 describe("getCvData", () => {
   it("loads parsed CV content from cv.generated.ts", () => {
@@ -26,6 +27,16 @@ describe("getCvData", () => {
 
     expect(skillmatch).toBeDefined();
     expect(skillmatch?.highlights.length).toBeGreaterThan(0);
+  });
+});
+
+describe("public email", () => {
+  it("shows the public address instead of the inbox listed in the PDF", () => {
+    const bits = getCvData().identity.contactBits;
+    const emails = bits.filter((bit) => bit.includes("@"));
+
+    expect(emails).toEqual([SOCIAL_LINKS.email]);
+    expect(bits.join(" ")).not.toContain("gmail.com");
   });
 });
 

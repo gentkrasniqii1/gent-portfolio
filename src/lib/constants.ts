@@ -21,7 +21,9 @@ export const SITE_URL =
 export const SOCIAL_LINKS = {
   github: "https://github.com/gentkrasniqii1",
   linkedin: "https://www.linkedin.com/in/gent-krasniqi-19736a355",
-  email: "gentkrass21@gmail.com",
+  /** Public address shown on the site. Messages from the contact form go to
+   * CONTACT_TO_EMAIL (server-side only) instead. */
+  email: "hello@gentkrasniqi.dev",
 } as const;
 
 export const NAV_ITEMS = [

@@ -1,3 +1,4 @@
+import { SOCIAL_LINKS } from "@/lib/constants";
 import type { Profile } from "@/types/profile";
 
 export const profile: Profile = {
@@ -24,7 +25,7 @@ export const profile: Profile = {
     "I'm a frontend-focused full-stack developer who designs and ships production web apps. My live work includes Velnora, a bilingual website for a Kosovo digital agency; Prizren Smart City, a civic platform where citizens report municipal issues that are classified by AI and routed to the right department; and SkillMatch, a recruitment platform with real-time chat and interview scheduling. I work across Next.js, React, TypeScript, NestJS, Node.js and PostgreSQL, completed a 6-month professional React.js internship, and study Computer Science and Engineering at UBT.",
   location: "Prizren, Kosovë",
   phone: "+383 49 168 682",
-  email: "gentkrass21@gmail.com",
+  email: SOCIAL_LINKS.email,
   github: "https://github.com/gentkrasniqii1",
   linkedin: "https://www.linkedin.com/in/gent-krasniqi-19736a355",
   portfolioUrl: "https://gent-portfolio.vercel.app",
