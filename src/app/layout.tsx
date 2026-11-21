@@ -4,7 +4,7 @@ import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Footer } from "@/components/layout/footer";
-import { MotionProvider } from "@/components/motion/motion-provider";
+import { RevealObserver } from "@/components/motion/reveal-observer";
 import { Navbar } from "@/components/navigation/navbar";
 import { JsonLd } from "@/components/shared/json-ld";
 import { SkipToContent } from "@/components/shared/skip-to-content";
@@ -113,19 +113,18 @@ export default function RootLayout({
           storageKey={THEME.storageKey}
           disableTransitionOnChange
         >
-          <MotionProvider>
-            <JsonLd />
-            <SkipToContent />
-            <Navbar />
-            <main
-              id="main-content"
-              tabIndex={-1}
-              className="flex flex-1 flex-col outline-none"
-            >
-              {children}
-            </main>
-            <Footer />
-          </MotionProvider>
+          <JsonLd />
+          <SkipToContent />
+          <Navbar />
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="flex flex-1 flex-col outline-none"
+          >
+            {children}
+          </main>
+          <Footer />
+          <RevealObserver />
           {IS_VERCEL ? (
             <>
               <Analytics />

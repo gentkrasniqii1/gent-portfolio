@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { AnimatePresence } from "motion/react";
-import * as m from "motion/react-m";
 import {
   useEffect,
   useEffectEvent,
@@ -12,7 +10,6 @@ import {
   useSyncExternalStore,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT } from "@/components/motion/config";
 import { cn } from "@/lib/utils";
 
 export type LightboxImage = {
@@ -41,8 +38,8 @@ const SWIPE_THRESHOLD = 50;
 /**
  * Full-screen image viewer: Escape or the backdrop closes it, arrow keys and
  * swipes move between images, focus is trapped inside and handed back to the
- * element that opened it. Fades and scales only, so reduced motion is honoured
- * through `MotionConfig`.
+ * element that opened it. It fades in and each image zooms in slightly with
+ * CSS keyframes; reduced motion turns both off.
  */
 export function Lightbox({
   images,
@@ -128,94 +125,81 @@ export function Lightbox({
   const go = (step: number) =>
     onIndexChange(((index ?? 0) + step + count) % count);
 
+  if (!image) return null;
+
   return createPortal(
-    <AnimatePresence>
-      {image ? (
-        <m.div
-          key="lightbox"
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label={label}
-          aria-describedby={captionId}
-          tabIndex={-1}
-          className="fixed inset-0 z-[60] flex flex-col bg-black/85 outline-none backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: EASE_OUT }}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) onIndexChange(null);
-          }}
-          onPointerDown={(event) => {
-            swipeStart.current = event.clientX;
-          }}
-          onPointerUp={(event) => {
-            if (swipeStart.current === null || count < 2) return;
-            const delta = event.clientX - swipeStart.current;
-            swipeStart.current = null;
-            if (Math.abs(delta) > SWIPE_THRESHOLD) go(delta < 0 ? 1 : -1);
-          }}
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={label}
+      aria-describedby={captionId}
+      tabIndex={-1}
+      className="fixed inset-0 z-[60] flex flex-col bg-black/85 outline-none backdrop-blur-sm motion-safe:animate-fade-in"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onIndexChange(null);
+      }}
+      onPointerDown={(event) => {
+        swipeStart.current = event.clientX;
+      }}
+      onPointerUp={(event) => {
+        if (swipeStart.current === null || count < 2) return;
+        const delta = event.clientX - swipeStart.current;
+        swipeStart.current = null;
+        if (Math.abs(delta) > SWIPE_THRESHOLD) go(delta < 0 ? 1 : -1);
+      }}
+    >
+      <div className="flex items-center justify-between gap-4 px-4 py-3 text-sm text-white/80 sm:px-6">
+        <span aria-live="polite">
+          {count > 1 && index !== null ? `${index + 1} / ${count}` : null}
+        </span>
+        <button
+          type="button"
+          onClick={() => onIndexChange(null)}
+          className="inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+          aria-label="Close viewer"
         >
-          <div className="flex items-center justify-between gap-4 px-4 py-3 text-sm text-white/80 sm:px-6">
-            <span aria-live="polite">
-              {count > 1 && index !== null ? `${index + 1} / ${count}` : null}
-            </span>
-            <button
-              type="button"
-              onClick={() => onIndexChange(null)}
-              className="inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-              aria-label="Close viewer"
-            >
-              <X className="size-5" aria-hidden />
-            </button>
-          </div>
+          <X className="size-5" aria-hidden />
+        </button>
+      </div>
 
-          <div
-            className="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-20"
-            onClick={(event) => {
-              if (event.target === event.currentTarget) onIndexChange(null);
-            }}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <m.div
-                key={image.src}
-                className="flex max-h-full max-w-full items-center justify-center"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2, ease: EASE_OUT }}
-              >
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  width={image.width}
-                  height={image.height}
-                  quality={quality}
-                  sizes="100vw"
-                  draggable={false}
-                  className="max-h-[calc(100dvh-9rem)] w-auto rounded-md object-contain shadow-2xl select-none"
-                />
-              </m.div>
-            </AnimatePresence>
+      <div
+        className="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-20"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) onIndexChange(null);
+        }}
+      >
+        <div
+          key={image.src}
+          className="flex max-h-full max-w-full items-center justify-center motion-safe:animate-zoom-in"
+        >
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            quality={quality}
+            sizes="100vw"
+            draggable={false}
+            className="max-h-[calc(100dvh-9rem)] w-auto rounded-md object-contain shadow-2xl select-none"
+          />
+        </div>
 
-            {count > 1 ? (
-              <>
-                <LightboxArrow direction="previous" onClick={() => go(-1)} />
-                <LightboxArrow direction="next" onClick={() => go(1)} />
-              </>
-            ) : null}
-          </div>
+        {count > 1 ? (
+          <>
+            <LightboxArrow direction="previous" onClick={() => go(-1)} />
+            <LightboxArrow direction="next" onClick={() => go(1)} />
+          </>
+        ) : null}
+      </div>
 
-          <p
-            id={captionId}
-            className="mx-auto max-w-3xl px-4 py-4 text-center text-sm leading-relaxed text-white/80"
-          >
-            {image.caption ?? image.alt}
-          </p>
-        </m.div>
-      ) : null}
-    </AnimatePresence>,
+      <p
+        id={captionId}
+        className="mx-auto max-w-3xl px-4 py-4 text-center text-sm leading-relaxed text-white/80"
+      >
+        {image.caption ?? image.alt}
+      </p>
+    </div>,
     document.body,
   );
 }

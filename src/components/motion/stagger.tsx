@@ -71,7 +71,9 @@ export function StaggerItem({
       data-reveal-item=""
       className={className}
       style={
-        delay ? ({ "--reveal-delay": `${delay}ms` } as CSSProperties) : undefined
+        delay
+          ? ({ "--reveal-delay": `${delay}ms` } as CSSProperties)
+          : undefined
       }
     >
       {children}

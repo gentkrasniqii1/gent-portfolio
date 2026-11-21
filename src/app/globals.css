@@ -184,7 +184,7 @@
 /* Keyframe animations. Only transform and opacity are animated, and every
  * usage sits behind `motion-safe:` so reduced-motion users get static content. */
 @theme {
-  /* The one easing curve used across the site (mirrored in motion/config.ts). */
+  /* The one easing curve used across the site. */
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 
   --animate-enter: enter 0.6s var(--ease-out-expo) both;
