@@ -105,12 +105,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Documented in `.env.example`:
 
-| Variable               | Required    | Purpose                                  |
-| ---------------------- | ----------- | ---------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL` | Yes (prod)  | Canonical URL, sitemap, OG absolute URLs |
-| `RESEND_API_KEY`       | For contact | Resend API key                           |
-| `CONTACT_TO_EMAIL`     | For contact | Inbox receiving messages                 |
-| `CONTACT_FROM_EMAIL`   | For contact | Verified Resend from address             |
+| Variable                    | Required    | Purpose                                                                                       |
+| --------------------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`      | Yes (prod)  | Canonical URL, sitemap, OG absolute URLs                                                      |
+| `RESEND_API_KEY`            | For contact | Resend API key                                                                                |
+| `CONTACT_TO_EMAIL`          | For contact | Private inbox receiving messages                                                              |
+| `CONTACT_FROM_EMAIL`        | For contact | Sender on a Resend-verified domain, e.g. `Gent Krasniqi Portfolio <contact@gentkrasniqi.dev>` |
+| `CONTACT_SEND_CONFIRMATION` | No          | `true` sends visitors an automatic "I'll reply within 24–48 hours" email                      |
 
 Without mail env vars, `/api/contact` returns **503** (no fake success). Analytics needs no extra client keys on Vercel.
 

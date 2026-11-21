@@ -50,12 +50,13 @@ Confirm Actions are enabled so `.github/workflows/ci.yml` runs on push/PR.
 2. Framework preset: **Next.js** (auto-detected)
 3. Environment variables (Production + Preview):
 
-| Name                   | Example                                                     |
-| ---------------------- | ----------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL` | `https://your-project.vercel.app` (then your custom domain) |
-| `RESEND_API_KEY`       | `re_…`                                                      |
-| `CONTACT_TO_EMAIL`     | your inbox                                                  |
-| `CONTACT_FROM_EMAIL`   | verified Resend sender                                      |
+| Name                        | Example                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`      | `https://your-project.vercel.app` (then your custom domain)                      |
+| `RESEND_API_KEY`            | `re_…`                                                                           |
+| `CONTACT_TO_EMAIL`          | your private inbox (not shown on the site)                                       |
+| `CONTACT_FROM_EMAIL`        | `Gent Krasniqi Portfolio <contact@gentkrasniqi.dev>` (domain verified in Resend) |
+| `CONTACT_SEND_CONFIRMATION` | `true` to auto-reply to visitors (optional)                                      |
 
 4. Deploy
 5. Confirm:
