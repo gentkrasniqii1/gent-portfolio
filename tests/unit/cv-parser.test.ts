@@ -33,9 +33,42 @@ Languages: Albanian (Native), English (Professional)
 Certifications: Shkolla Digjitale - Frontend Developer; RDA - AI Workshop
 `.trim();
 
+/** Shape of text read from a tagged PDF: one line per paragraph/list item. */
+const TAGGED_CV_TEXT = `
+Jane Doe
+Frontend / Full-Stack Developer
+Prizren, Kosovë · +383 00 000 000 · jane@example.com · github.com/jane
+Profile
+Developer who ships complete web apps.
+Technical skills
+• Frontend: React.js, Next.js
+• Tools & IT: Git/GitHub, Windows and hardware troubleshooting
+Professional experience
+Founder & Backend Developer — Studio, Prizren · 2026 – Present
+• Founded a digital studio
+Intern — Company, Prishtinë · Jun 2023 – Jan 2024
+• Built React.js interfaces
+Selected projects
+Shop — online store · shop.example.com · React, Node.js
+• Checkout with saved carts
+Earlier projects: Recipes app, Fitness app.
+Education
+BSc Computer Science — UBT · Oct 2023 – Present
+High School, Prizren · Sep 2020 – Jun 2023 · GPA 4.8
+Certifications & languages
+Certifications: School — Frontend Developer · RDA — AI Workshop (participation)
+Languages: Albanian (native), English (professional)
+`.trim();
+
 describe("normalizeRole", () => {
   it("fixes spaced react-pdf role output", () => {
     expect(normalizeRole("FR ONTEND DEV ELOP ER")).toBe("FRONTEND DEVELOPER");
+  });
+
+  it("keeps mixed-case roles as written", () => {
+    expect(normalizeRole("Frontend / Full-Stack  Developer")).toBe(
+      "Frontend / Full-Stack Developer",
+    );
   });
 });
 
@@ -126,6 +159,71 @@ Languages: JavaScript
     expect(warnings).toEqual([]);
     expect(data.skillGroups.length).toBeGreaterThan(0);
     expect(data.experience.length).toBeGreaterThan(0);
+  });
+
+  it("parses the tagged layout: Profile section, · separators and en-dash periods", () => {
+    const { data, warnings } = parseCvText(TAGGED_CV_TEXT);
+
+    expect(warnings).toEqual([]);
+    expect(data.identity.name).toBe("Jane Doe");
+    expect(data.identity.role).toBe("Frontend / Full-Stack Developer");
+    expect(data.identity.summary).toBe(
+      "Developer who ships complete web apps.",
+    );
+    expect(data.identity.contactBits).toEqual([
+      "Prizren, Kosovë",
+      "+383 00 000 000",
+      "jane@example.com",
+      "github.com/jane",
+    ]);
+    expect(data.skillGroups.map((group) => group.label)).toEqual([
+      "Frontend",
+      "Tools & IT",
+    ]);
+    expect(data.experience).toEqual([
+      expect.objectContaining({
+        title: "Founder & Backend Developer — Studio, Prizren",
+        period: "2026 – Present",
+        description: ["Founded a digital studio"],
+      }),
+      expect.objectContaining({
+        title: "Intern — Company, Prishtinë",
+        period: "Jun 2023 – Jan 2024",
+        description: ["Built React.js interfaces"],
+      }),
+    ]);
+    expect(data.projects[0]).toMatchObject({
+      title: "Shop — online store",
+      year: "",
+      liveUrl: "https://shop.example.com",
+      shortDescription: "React, Node.js",
+      highlights: ["Checkout with saved carts"],
+    });
+    expect(data.projects[1]).toMatchObject({
+      title: "Earlier projects",
+      highlights: ["Recipes app, Fitness app."],
+    });
+    expect(data.education[1]).toMatchObject({
+      title: "High School, Prizren",
+      period: "Sep 2020 – Jun 2023",
+      description: ["GPA 4.8"],
+    });
+    expect(data.certifications.map((cert) => cert.label)).toEqual([
+      "School — Frontend Developer",
+      "RDA — AI Workshop (participation)",
+    ]);
+    expect(data.languages.map((language) => language.name)).toEqual([
+      "Albanian",
+      "English",
+    ]);
+  });
+
+  it("slices sections by their position in the document, not a fixed order", () => {
+    const { data } = parseCvText(TAGGED_CV_TEXT);
+
+    // Experience comes before projects here; neither may swallow the other.
+    expect(data.experience).toHaveLength(2);
+    expect(data.projects).toHaveLength(2);
   });
 
   it("throws CvValidationError when no recognized section heading is found", () => {

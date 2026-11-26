@@ -4,7 +4,7 @@ The `/cv` page and the **Download PDF** button both come from the same file:
 
 `public/documents/cv.pdf`
 
-Replace that file whenever you update your CV. Do not edit `src/data/cv.generated.ts` by hand — it is generated on every `dev`/`build` run and is **not committed to git** (see [Generated file / git](#generated-file--git) below).
+Replace that file whenever you update your CV. Do not edit `src/data/cv.generated.ts` by hand — it is regenerated from the PDF on every `dev`/`build` run (see [Generated file / git](#generated-file--git) below).
 
 ## Update workflow
 
@@ -18,16 +18,31 @@ Replace that file whenever you update your CV. Do not edit `src/data/cv.generate
 
 If `cv.pdf` is missing but exactly one other `.pdf` file exists in `public/documents/`, `parse-cv.ts` will use that file instead and print a warning. This is a convenience for a one-off rename, not a general file-discovery feature: if zero or more than one non-canonical PDF is found, the parser does not guess — it fails (in CI/production) or keeps the previous generated data with a loud warning (locally). Prefer keeping the file named `cv.pdf`.
 
+## How the text is read
+
+`scripts/parse-cv.ts` extracts the PDF's text in one of two ways and logs which one it used:
+
+1. **Tagged PDFs (preferred)** — `[parse-cv] Read text from the PDF's tag structure`. PDFs printed from a browser (Chrome/Edge "Save as PDF") and most modern editors are _tagged_: they carry a structure tree of headings, paragraphs and list items. `scripts/pdf-text.ts` reads that tree and emits **one line per heading, paragraph or list item**, with list items prefixed `• `. This keeps bullet boundaries exact even when bullets are drawn as graphics rather than `•` characters, and it leaves out untagged page furniture such as running headers and `Page 1 of 2` footers.
+2. **Untagged PDFs (fallback)** — `[parse-cv] PDF is not tagged — using plain text extraction`. Plain text from `pdf-parse`'s `getText()`. Here bullets must be real `•` characters in the text, and lines that follow a bullet are treated as its wrapped continuation.
+
+`pdfjs-dist` is loaded from `pdf-parse`'s own dependency tree, so both paths always use the same pdfjs version.
+
 ## PDF structure (required for parsing)
 
-The parser (`scripts/cv-parser.ts`) locates sections by heading text, not by position — so reordering sections, changing how many entries or bullets each has, and changing text length are all supported. Keep these section titles recognizable (case/whitespace-insensitive) so the parser can split content:
+The parser (`scripts/cv-parser.ts`) finds sections by heading text (case- and whitespace-insensitive) and slices them **in the order they appear in the document**, so you can reorder sections and change how many entries or bullets each has. Two layouts are supported: the current one (`·` separators, en dashes) and the older one (commas, `|` and hyphens).
 
-- Header (before the first section heading): name, role, contact line, links line, then summary text. These four lines are still positional — the parser reads them as name → role → primary contact → secondary contact/links, then treats everything else before the first heading as the summary.
-- **Skills** — accepted headings: `TECHNICAL SKILLS`, `SKILLS`, `SKILLS & TOOLS`. Lines like `Label: item1, item2`.
-- **Projects** — accepted headings: `PROJECTS`, `SELECTED PROJECTS`. Title lines ending in a year; bullets with `•`; optional `Live:` / `Code:` / `Stack:` lines.
-- **Experience** — accepted headings: `PROFESSIONAL EXPERIENCE`, `EXPERIENCE`, `WORK EXPERIENCE`, `EMPLOYMENT HISTORY`. Headline + period (`Mon YYYY - Mon YYYY` or `- Present`); bullets with `•`.
-- **Education** — accepted headings: `EDUCATION`, `EDUCATION & TRAINING`. Program line + period.
-- **Additional information** — accepted headings: `ADDITIONAL INFORMATION`, `ADDITIONAL INFO`. `Languages:` and `Certifications:` lines.
+- **Header** (everything before the first section heading):
+  - With a **Profile** section: name → role → one or more contact lines. Contact items are separated by `·` (or `|`), e.g. `Prizren, Kosovë · +383 … · name@example.com · github.com/…`.
+  - Without one: name → role → primary contact line (comma-separated) → secondary contact/links line (`|`-separated), and everything after that is the summary.
+  - A letter-spaced all-caps role ending in `DEVELOPER` (`FR ONTEND DEV ELOP ER`) is re-joined; any other role is kept as written (only extra spaces are collapsed).
+- **Profile / summary** — accepted heading: `PROFILE`. Optional; its paragraph becomes the summary.
+- **Skills** — accepted headings: `TECHNICAL SKILLS`, `SKILLS`, `SKILLS & TOOLS`. One `Label: item1, item2` per line or list item.
+- **Experience** — accepted headings: `PROFESSIONAL EXPERIENCE`, `EXPERIENCE`, `WORK EXPERIENCE`, `EMPLOYMENT HISTORY`. One headline per job followed by its bullets. The headline is either `Title — Org, City · Period` or `Title - Org Period` (period at the end).
+- **Projects** — accepted headings: `PROJECTS`, `SELECTED PROJECTS`. Each project starts with either a `Title · domain · stack` line (the domain becomes the Live link, the rest the stack; a year segment is optional) or a title line ending in a year, followed by bullets and optional `Live:` / `Code:` / `Stack:` lines. A labelled line such as `Earlier projects: A, B, C` is kept as its own entry.
+- **Education** — accepted headings: `EDUCATION`, `EDUCATION & TRAINING`. One line per entry: `Program — School · Period · extra details` (details such as `GPA 4.8` are shown under the entry) or `Program - School Period`.
+- **Additional information** — accepted headings: `ADDITIONAL INFORMATION`, `ADDITIONAL INFO`, `CERTIFICATIONS & LANGUAGES`. A `Languages:` line (`Albanian (native), English (professional)`) and a `Certifications:` line with items separated by `·` or `;`. Either line may come first.
+
+**Periods** may use a hyphen, en dash or em dash, with or without months, and may end in `Present`: `Jun 2023 - Jan 2024`, `Oct 2026 – Present`, `2026 – Present`, `2020 - 2024`.
 
 If you use a heading not in this list, add it to `SECTION_ALIASES` in `scripts/cv-parser.ts`. If you change the structure more significantly (e.g. a new top-level section type), `scripts/cv-parser.ts` needs a corresponding parser function — see `parseProjects`/`parseExperience`/etc. for the pattern.
 
@@ -36,13 +51,13 @@ If you use a heading not in this list, add it to `SECTION_ALIASES` in `scripts/c
 `scripts/cv-parser.ts` validates the parsed data (`validateCvData`) before it is ever written to `cv.generated.ts`. A `CvValidationError` is thrown, and `parse-cv.ts` **always exits non-zero** (in dev, CI, and production alike — there is no stale-data fallback for a content problem), when:
 
 - no recognized section heading is found at all
-- the header is missing name/role/contact lines
+- the header is missing name/role/contact lines (at least 3 lines with a Profile section, 4 without)
 - `identity.name`, `identity.role`, or `identity.summary` end up empty
 - there is no contact information at all
 - an experience/education/project entry has a date/period that doesn't match a recognized format
 - the extracted text is suspiciously small relative to the raw PDF text (a sign the parser mis-detected sections and dropped most of the content)
 
-Non-fatal warnings (e.g. a single missing optional section, empty certifications) are still just logged.
+Non-fatal warnings (e.g. a missing section, no projects parsed, empty certifications) are logged and also recorded in `CV_PARSE_META.warnings` in the generated file. After replacing the PDF, check that this list is empty — a parse can succeed and still drop a whole section.
 
 ### Missing-file fallback
 
@@ -50,7 +65,17 @@ A **missing PDF file** (not a validation failure) is treated differently: locall
 
 ## Generated file / git
 
-`src/data/cv.generated.ts` is listed in `.gitignore` and should not be committed. It is fully reproducible from `public/documents/cv.pdf` by `scripts/parse-cv.ts`, which runs automatically via the `predev`/`prebuild` npm lifecycle hooks before `next dev` and `next build` — including on Vercel, since Vercel runs `npm run build`. Committing it would create a second, easily-stale copy of CV content alongside the PDF; not committing it guarantees the file in your working tree (or Vercel's build) always matches the current `cv.pdf`.
+`src/data/cv.generated.ts` is **committed** in this repository (it is not listed in `.gitignore`). It is fully reproducible from `public/documents/cv.pdf` by `scripts/parse-cv.ts`, which runs automatically via the `predev`/`prebuild` npm lifecycle hooks before `next dev` and `next build` — including on Vercel, since Vercel runs `npm run build`. So a deploy always regenerates it from the current PDF, whatever version is committed.
+
+The output is deterministic (repo-relative source path, Prettier-formatted, and the file is only rewritten when the parsed content changes), so it only shows up in a diff when the CV actually changed. When you replace `cv.pdf`, commit the regenerated `cv.generated.ts` together with it.
+
+## What `/cv` shows that differs from the PDF
+
+`src/data/cv.ts` wraps the generated data before the page renders it:
+
+- **Email:** any email address in the PDF's contact line is replaced with the public address from `SOCIAL_LINKS.email` in `src/lib/constants.ts`. The downloadable PDF itself is unchanged, so it still contains whatever address you exported.
+
+Everything else on the page is the parsed PDF text, laid out by `cv-document.tsx`.
 
 ## Download
 
@@ -63,23 +88,25 @@ A **missing PDF file** (not a validation failure) is treated differently: locall
 
 ## Files
 
-| Path                                | Role                                                                    |
-| ----------------------------------- | ----------------------------------------------------------------------- |
-| `public/documents/cv.pdf`           | Your CV file (replace to update everything)                             |
-| `scripts/parse-cv.ts`               | PDF → `cv.generated.ts` CLI; file resolution + validation gate          |
-| `scripts/cv-parser.ts`              | Text parsing logic + `validateCvData`                                   |
-| `scripts/dev-with-cv-watch.ts`      | Dev-only watcher: re-parses on any `.pdf` change in `public/documents/` |
-| `src/data/cv.generated.ts`          | Auto-generated view model for `/cv` — gitignored, never edit by hand    |
-| `src/data/cv.ts`                    | Re-exports + `getCvPdfFilename()`                                       |
-| `src/components/cv/cv-document.tsx` | Web layout, renders `CvData` structurally (unchanged)                   |
+| Path                                | Role                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------ |
+| `public/documents/cv.pdf`           | Your CV file (replace to update everything)                                    |
+| `scripts/parse-cv.ts`               | PDF → `cv.generated.ts` CLI; file resolution, text extraction, validation gate |
+| `scripts/pdf-text.ts`               | Tag-aware text extraction for tagged PDFs (one line per block/list item)       |
+| `scripts/cv-parser.ts`              | Text parsing logic + `validateCvData`                                          |
+| `scripts/dev-with-cv-watch.ts`      | Dev-only watcher: re-parses on any `.pdf` change in `public/documents/`        |
+| `src/data/cv.generated.ts`          | Auto-generated view model for `/cv` — committed, never edit by hand            |
+| `src/data/cv.ts`                    | Public-email swap, re-exports + `getCvPdfFilename()`                           |
+| `src/components/cv/cv-document.tsx` | Web layout, renders `CvData` structurally                                      |
 
 ## Layout fidelity — what to expect
 
-`pdf-parse` (the library used to extract PDF text) exposes plain per-page text only — no font size, position, or bounding-box data at the level this project uses it (`getText()` returns `{ num, text }` per page). Because of this, `/cv` reproduces the **semantic structure** of the source PDF (heading hierarchy: summary → experience → projects → education → skills → languages/certifications, each with its own entries and bullets) rather than its exact visual layout (columns, exact line breaks, font choices). This is a deliberate trade-off: reconstructing pixel-level PDF layout would require a materially heavier extraction approach for a benefit (exact visual reproduction) this project doesn't need, since `cv-document.tsx` already renders the structured data with its own consistent, print-friendly design.
+`/cv` reproduces the **semantic structure** of the source PDF (summary → experience → projects → education → skills → languages/certifications, each with its own entries and bullets) rather than its exact visual layout. Neither extraction path uses font sizes or positions: tagged PDFs give the paragraph and list structure, untagged PDFs only plain lines. Reconstructing pixel-level layout would need a much heavier approach for a benefit this project doesn't need, since `cv-document.tsx` renders the structured data with its own consistent, print-friendly design.
 
 ## Quick check after replacing the PDF
 
-1. Run `npm run dev` (or `npm run build`) and confirm `[parse-cv] Wrote src/data/cv.generated.ts` with no errors.
-2. Open `/cv` and confirm content matches the PDF.
-3. Click **Download PDF** — the file should match `public/documents/cv.pdf` exactly.
-4. Optional: `npm run test:unit -- tests/unit/cv.test.ts tests/unit/cv-parser.test.ts`
+1. Run `npx tsx scripts/parse-cv.ts` (or `npm run dev` / `npm run build`) and confirm `[parse-cv] Wrote src/data/cv.generated.ts` with no errors.
+2. Open `src/data/cv.generated.ts` and confirm `CV_PARSE_META.warnings` is empty.
+3. Open `/cv` and confirm every section matches the PDF.
+4. Click **Download PDF** — the file should match `public/documents/cv.pdf` exactly.
+5. Optional: `npm run test:unit -- tests/unit/cv.test.ts tests/unit/cv-parser.test.ts tests/unit/pdf-text.test.ts`

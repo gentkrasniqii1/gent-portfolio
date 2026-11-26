@@ -4,6 +4,7 @@ import { PDFParse } from "pdf-parse";
 import { format, resolveConfig } from "prettier";
 import type { CvData } from "../src/types/cv";
 import { CvValidationError, parseCvText } from "./cv-parser";
+import { extractTaggedText } from "./pdf-text";
 
 const ROOT = process.cwd();
 const DOCUMENTS_DIR = path.join(ROOT, "public", "documents");
@@ -61,8 +62,27 @@ async function resolveCvPdfPath(): Promise<{
   return null;
 }
 
+/**
+ * Prefers the PDF's tag structure (exact paragraph and bullet boundaries) and
+ * falls back to plain text extraction for untagged PDFs.
+ */
 async function readPdfText(filePath: string) {
   const buffer = await fs.readFile(filePath);
+
+  try {
+    const tagged = await extractTaggedText(new Uint8Array(buffer));
+    if (tagged) {
+      console.log("[parse-cv] Read text from the PDF's tag structure");
+      return tagged;
+    }
+    console.log("[parse-cv] PDF is not tagged — using plain text extraction");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(
+      `[parse-cv] Tagged extraction failed (${message}) — using plain text extraction`,
+    );
+  }
+
   const parser = new PDFParse({ data: buffer });
   try {
     const result = await parser.getText();
