@@ -69,6 +69,12 @@ A **missing PDF file** (not a validation failure) is treated differently: locall
 
 The output is deterministic (repo-relative source path, Prettier-formatted, and the file is only rewritten when the parsed content changes), so it only shows up in a diff when the CV actually changed. When you replace `cv.pdf`, commit the regenerated `cv.generated.ts` together with it.
 
+**Staleness guard.** `CV_PARSE_META.sourceSha256` records the SHA-256 of the PDF the file was generated from, and `tests/unit/cv.test.ts` fails if it doesn't match the current `public/documents/cv.pdf`. CI runs the unit tests (and typecheck) _before_ the build, against the committed file, so a commit that changes `cv.pdf` without regenerating `cv.generated.ts` fails CI instead of leaving a stale copy in the repo. Fix it with `npx tsx scripts/parse-cv.ts` and commit both files.
+
+Vercel's build command must stay the default (`npm run build`) so the `prebuild` hook runs; overriding it with `next build` would skip the parser and deploy whatever `cv.generated.ts` is committed.
+
+After a deploy, compare `/cv` with the download in a freshly loaded tab (Ctrl+Shift+R). A tab opened before the deploy keeps the previous page, and client-side navigation can reuse a visited page for a few minutes, while the download always comes from the new deployment.
+
 ## What `/cv` shows that differs from the PDF
 
 `src/data/cv.ts` wraps the generated data before the page renders it:
