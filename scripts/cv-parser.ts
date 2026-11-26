@@ -9,6 +9,7 @@ import type {
 } from "../src/types/cv";
 
 const SECTION_KEYS = [
+  "PROFILE",
   "TECHNICAL SKILLS",
   "PROJECTS",
   "PROFESSIONAL EXPERIENCE",
@@ -18,6 +19,9 @@ const SECTION_KEYS = [
 
 type SectionKey = (typeof SECTION_KEYS)[number];
 
+/** Sections a CV may leave out without a warning (the summary can also sit in the header). */
+const OPTIONAL_SECTIONS: ReadonlySet<SectionKey> = new Set(["PROFILE"]);
+
 /**
  * Alternate headings that map to the same canonical section. Keeps the parser
  * from breaking on reasonable CV wording changes (e.g. "SKILLS" vs.
@@ -25,6 +29,7 @@ type SectionKey = (typeof SECTION_KEYS)[number];
  * Add new aliases here as real CV variants are encountered — do not guess.
  */
 const SECTION_ALIASES: Record<string, SectionKey> = {
+  PROFILE: "PROFILE",
   "TECHNICAL SKILLS": "TECHNICAL SKILLS",
   SKILLS: "TECHNICAL SKILLS",
   "SKILLS & TOOLS": "TECHNICAL SKILLS",
@@ -38,6 +43,7 @@ const SECTION_ALIASES: Record<string, SectionKey> = {
   "EDUCATION & TRAINING": "EDUCATION",
   "ADDITIONAL INFORMATION": "ADDITIONAL INFORMATION",
   "ADDITIONAL INFO": "ADDITIONAL INFORMATION",
+  "CERTIFICATIONS & LANGUAGES": "ADDITIONAL INFORMATION",
 };
 
 /** Thrown when parsed CV data fails structural validation — the caller must not use it. */
@@ -50,9 +56,15 @@ export class CvValidationError extends Error {
 
 const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
 
-const PERIOD_PATTERN = new RegExp(
-  `((${MONTH})\\s+\\d{4}\\s*-\\s*(?:(${MONTH})\\s+\\d{4}|Present))$`,
-);
+const DASH = "[-\u2013\u2014]";
+const DATE = `(?:(?:${MONTH})\\s+)?\\d{4}`;
+const PERIOD = `${DATE}\\s*${DASH}\\s*(?:${DATE}|Present)`;
+
+/** A period at the end of a line, e.g. "... Jun 2023 - Jan 2024". */
+const PERIOD_PATTERN = new RegExp(`(${PERIOD})$`);
+
+/** A "·"-separated segment that is exactly a period, e.g. "2026 – Present". */
+const PERIOD_SEGMENT = new RegExp(`^${PERIOD}$`);
 
 const YEAR_PATTERN = /(\d{4})(?:\s*-\s*Present)?$/;
 
@@ -62,7 +74,9 @@ export function normalizeCompact(value: string) {
 
 export function normalizeRole(value: string) {
   const compact = value.replace(/\s/g, "");
-  if (/DEVELOPER$/i.test(compact)) {
+  // Letter-spaced all-caps titles ("FR ONTEND DEV ELOP ER") lose their word
+  // breaks in extraction; mixed-case roles are kept as written.
+  if (/^[A-Z\s]+$/.test(value) && /DEVELOPER$/i.test(compact)) {
     return compact.replace(/DEVELOPER$/i, " DEVELOPER").trim();
   }
   return value.replace(/\s+/g, " ").trim();
@@ -122,12 +136,14 @@ function splitSections(lines: string[]) {
     }
   });
 
-  const ordered = SECTION_KEYS.filter((section) => indices.has(section)).map(
-    (section) => ({
+  // Sections are sliced in the order they appear in the document, so a CV
+  // may order its sections however it likes.
+  const ordered = SECTION_KEYS.filter((section) => indices.has(section))
+    .map((section) => ({
       key: section,
       start: indices.get(section)!,
-    }),
-  );
+    }))
+    .sort((a, b) => a.start - b.start);
 
   const sections = new Map<SectionKey, string[]>();
   ordered.forEach((entry, index) => {
@@ -150,9 +166,13 @@ function parseContactPrimary(line: string) {
     .filter(Boolean);
 }
 
-function parseContactSecondary(line: string) {
+/** Splits a header contact line on "·" or "|", or as a comma-separated line. */
+function parseContactLine(line: string) {
+  const separator = line.includes("·") ? "·" : line.includes("|") ? "|" : null;
+  if (!separator) return parseContactPrimary(line);
+
   return line
-    .split("|")
+    .split(separator)
     .map((part) => part.trim())
     .filter(Boolean);
 }
@@ -160,7 +180,8 @@ function parseContactSecondary(line: string) {
 function parseSkillGroups(lines: string[]): CvSkillGroup[] {
   return lines
     .map((line, index) => {
-      const match = line.match(/^([^:]+):\s*(.+)$/);
+      const content = isBulletLine(line) ? stripBullet(line) : line;
+      const match = content.match(/^([^:]+):\s*(.+)$/);
       if (!match) return null;
       const label = match[1].trim();
       const skills = match[2]
@@ -211,12 +232,43 @@ function stripBullet(line: string) {
 }
 
 function isProjectTitleLine(line: string) {
-  return (
-    YEAR_PATTERN.test(line) && !isBulletLine(line) && !/^Live:/i.test(line)
-  );
+  if (isBulletLine(line) || /^(Live|Stack|Code):/i.test(line)) return false;
+  // "Title 2026" (year at the end) or "Title · domain · stack".
+  return YEAR_PATTERN.test(line) || line.includes(" · ");
 }
 
-function parseProjectTitle(line: string) {
+/** A bare domain or URL such as "skillmatchapp.com". */
+function isLinkLike(value: string) {
+  return /^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(value);
+}
+
+/** "Earlier projects: …" — a labelled line that is not a link or stack line. */
+const LABEL_LINE_PATTERN = /^([A-Z][^:]{0,40}):\s+(.+)$/;
+
+function parseProjectTitle(line: string): {
+  title: string;
+  year: string;
+  liveUrl?: string;
+  stack?: string;
+} {
+  if (line.includes(" · ")) {
+    const [title = "", ...rest] = line
+      .split("·")
+      .map((part) => part.trim())
+      .filter(Boolean);
+    const yearIndex = rest.findIndex((part) => isPlausibleDateLabel(part));
+    const year = yearIndex >= 0 ? rest.splice(yearIndex, 1)[0] : "";
+    const linkIndex = rest.findIndex(isLinkLike);
+    const link = linkIndex >= 0 ? rest.splice(linkIndex, 1)[0] : undefined;
+
+    return {
+      title,
+      year,
+      liveUrl: link ? toHttpsUrl(link) : undefined,
+      stack: rest.length > 0 ? rest.join(" · ") : undefined,
+    };
+  }
+
   const presentMatch = line.match(/^(.+?)\s+(\d{4}\s*-\s*Present)$/i);
   if (presentMatch) {
     return {
@@ -253,14 +305,31 @@ function parseProjects(lines: string[]): CvProjectItem[] {
   for (const line of lines) {
     if (isProjectTitleLine(line)) {
       pushCurrent();
-      const { title, year } = parseProjectTitle(line);
+      const { title, year, liveUrl, stack } = parseProjectTitle(line);
       current = {
         id: slugify(title, projects.length),
         title,
         year,
-        shortDescription: "",
+        shortDescription: stack ?? "",
         highlights: [],
+        ...(liveUrl ? { liveUrl } : {}),
       };
+      continue;
+    }
+
+    const labelMatch =
+      !isBulletLine(line) && !/^(Live|Stack|Code):/i.test(line)
+        ? line.match(LABEL_LINE_PATTERN)
+        : null;
+    if (labelMatch) {
+      pushCurrent();
+      projects.push({
+        id: slugify(labelMatch[1], projects.length),
+        title: labelMatch[1].trim(),
+        year: "",
+        shortDescription: "",
+        highlights: [labelMatch[2].trim()],
+      });
       continue;
     }
 
@@ -293,6 +362,33 @@ function parseProjects(lines: string[]): CvProjectItem[] {
   return projects;
 }
 
+/**
+ * Splits an entry line into its title, period and any trailing details.
+ * Handles "Title - Org Jun 2023 - Jan 2024" (period at the end) and the
+ * "·"-separated "Title — Org · Oct 2026 – Present · GPA 4.8" layout.
+ */
+function parseEntryHeadline(line: string) {
+  if (line.includes("·")) {
+    const segments = line.split("·").map((part) => part.trim());
+    const periodIndex = segments.findIndex((part) => PERIOD_SEGMENT.test(part));
+    if (periodIndex > 0) {
+      return {
+        title: segments.slice(0, periodIndex).join(" · "),
+        period: segments[periodIndex].replace(/\s+/g, " "),
+        details: segments.slice(periodIndex + 1).filter(Boolean),
+      };
+    }
+  }
+
+  const periodMatch = line.match(PERIOD_PATTERN);
+  if (!periodMatch) return null;
+  return {
+    title: line.slice(0, periodMatch.index).trim(),
+    period: periodMatch[1].replace(/\s+/g, " "),
+    details: [] as string[],
+  };
+}
+
 function parseExperience(lines: string[]): CvExperienceItem[] {
   const entries: CvExperienceItem[] = [];
   let current: CvExperienceItem | null = null;
@@ -311,16 +407,15 @@ function parseExperience(lines: string[]): CvExperienceItem[] {
   };
 
   for (const line of lines) {
-    const periodMatch = line.match(PERIOD_PATTERN);
-    if (periodMatch && !isBulletLine(line)) {
+    const headline = isBulletLine(line) ? null : parseEntryHeadline(line);
+    if (headline) {
       pushCurrent();
-      const headline = line.slice(0, periodMatch.index).trim();
       current = {
-        id: slugify(headline, entries.length),
-        title: headline,
+        id: slugify(headline.title, entries.length),
+        title: headline.title,
         organization: "",
-        period: periodMatch[1].replace(/\s+/g, " "),
-        description: [],
+        period: headline.period,
+        description: [...headline.details],
       };
       continue;
     }
@@ -344,16 +439,15 @@ function parseExperience(lines: string[]): CvExperienceItem[] {
 
 function parseEducation(lines: string[]): CvExperienceItem[] {
   return lines.flatMap((line, index) => {
-    const periodMatch = line.match(PERIOD_PATTERN);
-    if (!periodMatch) return [];
-    const headline = line.slice(0, periodMatch.index).trim();
+    const headline = parseEntryHeadline(line);
+    if (!headline) return [];
     return [
       {
-        id: slugify(headline, index),
-        title: headline,
+        id: slugify(headline.title, index),
+        title: headline.title,
         organization: "",
-        period: periodMatch[1].replace(/\s+/g, " "),
-        description: [] as string[],
+        period: headline.period,
+        description: headline.details,
       },
     ];
   });
@@ -380,7 +474,7 @@ function parseCertifications(lines: string[]): CvCertificationItem[] {
   if (!joined) return [];
 
   return joined
-    .split(";")
+    .split(/;|\s·\s/)
     .map((label, index) => ({
       id: slugify(label, index),
       label: label.trim(),
@@ -391,8 +485,15 @@ function parseCertifications(lines: string[]): CvCertificationItem[] {
 function parseAdditionalInformation(lines: string[]) {
   const languagesLine = lines.find((line) => /^Languages:/i.test(line));
   const certIndex = lines.findIndex((line) => /^Certifications:/i.test(line));
-  const certificationLines =
-    certIndex >= 0 ? lines.slice(certIndex) : ([] as string[]);
+  // Certifications may wrap over several lines; they end where a Languages
+  // line begins (either order is allowed).
+  const certificationLines: string[] = [];
+  if (certIndex >= 0) {
+    for (const line of lines.slice(certIndex)) {
+      if (certificationLines.length > 0 && /^Languages:/i.test(line)) break;
+      certificationLines.push(line);
+    }
+  }
 
   return {
     languages: languagesLine ? parseLanguages(languagesLine) : [],
@@ -415,21 +516,28 @@ export function parseCvText(rawText: string): {
     );
   }
 
+  const { ordered, sections } = splitSections(lines);
+  const profileLines = sections.get("PROFILE");
+
+  // With a Profile section the header is name, role and contact line(s);
+  // without one it is name, role, two contact lines, then the summary.
   const headerLines = lines.slice(0, firstSectionIndex);
-  if (headerLines.length < 4) {
+  const minimumHeaderLines = profileLines ? 3 : 4;
+  if (headerLines.length < minimumHeaderLines) {
     throw new CvValidationError(
       "CV header is incomplete (expected name, role, and contact lines " +
         `before the first section heading, found ${headerLines.length} line(s)).`,
     );
   }
 
-  const [nameLine, roleLine, contactPrimaryLine, contactSecondaryLine] =
-    headerLines;
-  const summary = headerLines.slice(4).join(" ").trim();
+  const [nameLine, roleLine] = headerLines;
+  const contactLines = profileLines
+    ? headerLines.slice(2)
+    : headerLines.slice(2, 4);
+  const summary = (profileLines ?? headerLines.slice(4)).join(" ").trim();
 
-  const { ordered, sections } = splitSections(lines);
   for (const section of SECTION_KEYS) {
-    if (!ordered.includes(section)) {
+    if (!OPTIONAL_SECTIONS.has(section) && !ordered.includes(section)) {
       warnings.push(`Missing section: ${section}`);
     }
   }
@@ -444,9 +552,7 @@ export function parseCvText(rawText: string): {
     sections.get("ADDITIONAL INFORMATION") ?? [],
   );
 
-  const contactPrimary = parseContactPrimary(contactPrimaryLine);
-  const contactSecondary = parseContactSecondary(contactSecondaryLine);
-  const contactBits = [...contactPrimary, ...contactSecondary];
+  const contactBits = contactLines.flatMap(parseContactLine);
 
   const identity: CvIdentity = {
     name: nameLine.trim(),
@@ -490,7 +596,8 @@ function isPlausibleDateLabel(value: string) {
   if (!value) return false;
   const compact = value.replace(/\s+/g, " ").trim();
   if (PERIOD_PATTERN.test(compact)) return true;
-  if (/^\d{4}(\s*-\s*(\d{4}|Present))?$/i.test(compact)) return true;
+  if (/^\d{4}(\s*[-\u2013\u2014]\s*(\d{4}|Present))?$/i.test(compact))
+    return true;
   return false;
 }
 
