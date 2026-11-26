@@ -7,7 +7,9 @@ export const CV_PDF_PATH = "/documents/cv.pdf";
 
 export const CV_PARSE_META: CvParseMeta = {
   sourcePath: "public/documents/cv.pdf",
-  generatedAt: "2026-11-26T16:22:20.537Z",
+  sourceSha256:
+    "96d1792f4377e02b62824f0f57a0570d9d2e53e60da094c487f80a8edc8e9081",
+  generatedAt: "2026-11-26T17:23:36.790Z",
   warnings: [],
 };
 

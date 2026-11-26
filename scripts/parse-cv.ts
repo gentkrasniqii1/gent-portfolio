@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PDFParse } from "pdf-parse";
@@ -122,10 +123,18 @@ function serializeValue(value: unknown, indent = 0): string {
 
 const GENERATED_AT_PATTERN = /generatedAt: "[^"]*"/;
 
+/** SHA-256 of the source PDF, so a stale generated file can be detected. */
+async function hashFile(filePath: string) {
+  return createHash("sha256")
+    .update(await fs.readFile(filePath))
+    .digest("hex");
+}
+
 function buildGeneratedFile(
   data: CvData,
   warnings: string[],
   sourcePath: string,
+  sourceSha256: string,
   generatedAt: string,
 ) {
   // Repo-relative so the output is identical on every machine.
@@ -144,6 +153,7 @@ export const CV_PDF_PATH = "/documents/cv.pdf";
 
 export const CV_PARSE_META: CvParseMeta = ${serializeValue({
     sourcePath: relativeSource,
+    sourceSha256,
     generatedAt,
     warnings,
   })};
@@ -215,7 +225,13 @@ async function main() {
     }
 
     const output = await formatGenerated(
-      buildGeneratedFile(data, warnings, pdfPath, new Date().toISOString()),
+      buildGeneratedFile(
+        data,
+        warnings,
+        pdfPath,
+        await hashFile(pdfPath),
+        new Date().toISOString(),
+      ),
     );
     const previous = await fs.readFile(OUTPUT_PATH, "utf8").catch(() => null);
     const relativeOutput = path.relative(ROOT, OUTPUT_PATH);

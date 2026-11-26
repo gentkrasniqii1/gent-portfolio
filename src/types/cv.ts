@@ -54,6 +54,8 @@ export interface CvData {
 
 export interface CvParseMeta {
   sourcePath: string;
+  /** SHA-256 of the PDF this file was generated from (checked by tests/unit/cv.test.ts). */
+  sourceSha256: string;
   generatedAt: string;
   warnings: string[];
 }

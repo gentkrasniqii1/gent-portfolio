@@ -1,8 +1,32 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { CV_PDF_PATH, getCvData, getCvPdfFilename } from "@/data/cv";
+import {
+  CV_PARSE_META,
+  CV_PDF_PATH,
+  getCvData,
+  getCvPdfFilename,
+} from "@/data/cv";
 import { SOCIAL_LINKS } from "@/lib/constants";
+
+describe("cv.generated.ts", () => {
+  // CI runs this before the build, so a commit that changes cv.pdf without
+  // regenerating the committed cv.generated.ts fails instead of shipping
+  // stale CV data.
+  it("was generated from the current public/documents/cv.pdf", () => {
+    const pdf = fs.readFileSync(
+      path.join(process.cwd(), "public", "documents", "cv.pdf"),
+    );
+    const currentSha256 = createHash("sha256").update(pdf).digest("hex");
+
+    expect(
+      CV_PARSE_META.sourceSha256,
+      "src/data/cv.generated.ts is out of date with public/documents/cv.pdf. " +
+        "Run `npx tsx scripts/parse-cv.ts` and commit both files together.",
+    ).toBe(currentSha256);
+  });
+});
 
 describe("getCvData", () => {
   it("loads parsed CV content from cv.generated.ts", () => {
